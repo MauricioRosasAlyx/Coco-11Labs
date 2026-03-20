@@ -1,5 +1,5 @@
 import { useConversation } from "@elevenlabs/react";
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useState } from "react";
 import "./App.css";
 
 type Screen = "home" | "plans" | "checkout";
@@ -15,11 +15,6 @@ type ToolEvent = {
   isCalled?: boolean;
 };
 
-type AudioInputDevice = {
-  deviceId: string;
-  label: string;
-};
-
 enum DisplayOption {
   Vitrina = "vitrinas",
   Tienda = "tienda",
@@ -31,6 +26,8 @@ const displayImages: Record<DisplayOption, string> = {
   [DisplayOption.Tienda]: "/slides/tienda.png",
   [DisplayOption.Totem]: "/slides/totem.png",
 };
+
+const ELEVENLABS_AGENT_ID = import.meta.env.VITE_ELEVENLABS_AGENT_ID;
 
 function getDisplayOptionFromValue(value: unknown) {
   if (typeof value !== "string") {
@@ -67,18 +64,6 @@ function getDisplayOptionFromParameters(parameters?: ToolDetails) {
     getDisplayOptionFromValue(parameters.tipo) ??
     getDisplayOptionFromValue(parameters.view)
   );
-}
-
-function looksExternalMic(label: string) {
-  const normalizedLabel = label.toLowerCase();
-
-  return !["macbook", "built-in", "built in", "internal", "default"].some(
-    (term) => normalizedLabel.includes(term),
-  );
-}
-
-function getPreferredInputDevice(devices: AudioInputDevice[]) {
-  return devices.find((device) => looksExternalMic(device.label)) ?? devices[0];
 }
 
 function PresenterVideo(props: {
@@ -152,11 +137,17 @@ function PresenterVideo(props: {
           </div>
         </div>
       ) : isConnecting ? (
-        <img
-          src="/coco-connecting.svg"
-          alt="Conectando con Coco"
-          className="connecting-image"
-        />
+        <div className="connecting-state" role="status" aria-live="polite">
+          <img
+            src="/coco-connecting.png"
+            alt="Conectando con Coco"
+            className="connecting-image"
+          />
+          <div className="connecting-overlay">
+            <span className="connecting-loader" aria-hidden="true" />
+            <span className="connecting-text">Conectando con Coco</span>
+          </div>
+        </div>
       ) : (
         <video
           src="/presenter.mp4"
@@ -179,101 +170,9 @@ export default function App() {
   const [currentDisplay, setCurrentDisplay] = useState<DisplayOption | null>(
     null,
   );
-  const [audioInputs, setAudioInputs] = useState<AudioInputDevice[]>([]);
-  const [selectedInputId, setSelectedInputId] = useState("");
 
   const currentSlide =
     currentDisplay === null ? null : displayImages[currentDisplay];
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadAudioInputs = async (preferExternal = false) => {
-      if (
-        typeof navigator === "undefined" ||
-        !navigator.mediaDevices?.enumerateDevices
-      ) {
-        return [] as AudioInputDevice[];
-      }
-
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const nextInputs = devices
-        .filter((device) => device.kind === "audioinput")
-        .map((device, index) => ({
-          deviceId: device.deviceId,
-          label: device.label || `Microfono ${index + 1}`,
-        }));
-
-      if (!isMounted) {
-        return nextInputs;
-      }
-
-      setAudioInputs(nextInputs);
-      setSelectedInputId((currentValue) => {
-        if (
-          currentValue &&
-          !preferExternal &&
-          nextInputs.some((device) => device.deviceId === currentValue)
-        ) {
-          return currentValue;
-        }
-
-        return getPreferredInputDevice(nextInputs)?.deviceId ?? "";
-      });
-
-      return nextInputs;
-    };
-
-    void loadAudioInputs();
-    const handleDeviceChange = () => {
-      void loadAudioInputs(true);
-    };
-
-    navigator.mediaDevices?.addEventListener?.(
-      "devicechange",
-      handleDeviceChange,
-    );
-
-    return () => {
-      isMounted = false;
-      navigator.mediaDevices?.removeEventListener?.(
-        "devicechange",
-        handleDeviceChange,
-      );
-    };
-  }, []);
-
-  const refreshAudioInputs = async (preferExternal = false) => {
-    if (
-      typeof navigator === "undefined" ||
-      !navigator.mediaDevices?.enumerateDevices
-    ) {
-      return [] as AudioInputDevice[];
-    }
-
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const nextInputs = devices
-      .filter((device) => device.kind === "audioinput")
-      .map((device, index) => ({
-        deviceId: device.deviceId,
-        label: device.label || `Microfono ${index + 1}`,
-      }));
-
-    setAudioInputs(nextInputs);
-    setSelectedInputId((currentValue) => {
-      if (
-        currentValue &&
-        !preferExternal &&
-        nextInputs.some((device) => device.deviceId === currentValue)
-      ) {
-        return currentValue;
-      }
-
-      return getPreferredInputDevice(nextInputs)?.deviceId ?? "";
-    });
-
-    return nextInputs;
-  };
 
   const trackToolEvent = (
     source: ToolEvent["source"],
@@ -288,7 +187,7 @@ export default function App() {
       ...extra,
     };
 
-    console.log("Tool event:", event);
+    // console.log("Tool event:", event);
     setLastToolEvent(event);
 
     const displayOption = getDisplayOptionFromParameters(event.parameters);
@@ -350,39 +249,24 @@ export default function App() {
       return;
     }
 
-    const refreshedInputs = await refreshAudioInputs(true);
-    const preferredInputId =
-      getPreferredInputDevice(refreshedInputs)?.deviceId || selectedInputId;
-
     grantedStream?.getTracks().forEach((track) => track.stop());
 
+    if (!ELEVENLABS_AGENT_ID) {
+      console.error(
+        "Missing VITE_ELEVENLABS_AGENT_ID. Define it in your .env file.",
+      );
+      setStatus("error");
+      return;
+    }
+
     await conversation.startSession({
-      agentId: "agent_7301km18p09wed2r8eeb8c2r4jwm", //agent_7301km18p09wed2r8eeb8c2r4jwm (Glider) || agent_1001km138rkbebxv2xaabqpd0ace (Mario)
+      agentId: ELEVENLABS_AGENT_ID,
       connectionType: "webrtc",
-      inputDeviceId: preferredInputId || undefined,
     });
   };
 
   const stop = async () => {
     await conversation.endSession();
-  };
-
-  const handleInputDeviceChange = async (
-    event: ChangeEvent<HTMLSelectElement>,
-  ) => {
-    const nextDeviceId = event.target.value;
-
-    setSelectedInputId(nextDeviceId);
-
-    if (status === "disconnected" || status === "idle") {
-      return;
-    }
-
-    await conversation.changeInputDevice({
-      format: "pcm",
-      sampleRate: 16000,
-      inputDeviceId: nextDeviceId || undefined,
-    });
   };
 
   return (
@@ -391,24 +275,6 @@ export default function App() {
         <div className="app-content">
           <div className="slide-card">
             <div className="slide-header">
-              <label className="microphone-label">
-                <span>Microfono</span>
-                <select
-                  value={selectedInputId}
-                  onChange={handleInputDeviceChange}
-                  className="microphone-select"
-                >
-                  {audioInputs.length === 0 ? (
-                    <option value="">Detectando microfonos...</option>
-                  ) : (
-                    audioInputs.map((device) => (
-                      <option key={device.deviceId} value={device.deviceId}>
-                        {device.label}
-                      </option>
-                    ))
-                  )}
-                </select>
-              </label>
               <span className="display-indicator">
                 {currentDisplay === null
                   ? "Sin vista"
@@ -430,11 +296,11 @@ export default function App() {
             )}
           </div>
 
-          {lastToolEvent && (
+          {/* {lastToolEvent && (
             <pre className="tool-event-log">
               {JSON.stringify(lastToolEvent, null, 2)}
             </pre>
-          )}
+          )} */}
         </div>
 
         <PresenterVideo status={status} onStart={start} onStop={stop} />
