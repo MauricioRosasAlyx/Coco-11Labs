@@ -28,6 +28,7 @@ const displayImages: Record<DisplayOption, string> = {
 };
 
 const ELEVENLABS_AGENT_ID = import.meta.env.VITE_ELEVENLABS_AGENT_ID;
+const DEFAULT_VIEW_IMAGE = "/macropay-default.png";
 
 function getDisplayOptionFromValue(value: unknown) {
   if (typeof value !== "string") {
@@ -290,9 +291,11 @@ export default function App() {
                 className="slide-image"
               />
             ) : (
-              <div className="slide-placeholder">
-                Esperando una vista del tool
-              </div>
+              <img
+                src={DEFAULT_VIEW_IMAGE}
+                alt="Vista por defecto Macropay"
+                className="slide-image"
+              />
             )}
           </div>
 
