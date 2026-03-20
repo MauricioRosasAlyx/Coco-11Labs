@@ -1,0 +1,38 @@
+<svg width="900" height="1600" viewBox="0 0 900 1600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1600" rx="56" fill="url(#bg)"/>
+  <circle cx="450" cy="460" r="210" fill="white" fill-opacity="0.92"/>
+  <ellipse cx="450" cy="1160" rx="240" ry="90" fill="#BFDBFE" fill-opacity="0.55"/>
+
+  <path d="M308 360C290 286 360 222 424 282L450 306L476 282C540 222 610 286 592 360L578 418H322L308 360Z" fill="#FFF7ED"/>
+  <path d="M332 344C322 302 360 264 396 296L418 316L390 372L332 344Z" fill="#F9A8D4"/>
+  <path d="M568 344C578 302 540 264 504 296L482 316L510 372L568 344Z" fill="#F9A8D4"/>
+
+  <circle cx="450" cy="450" r="176" fill="#FFFBF5"/>
+  <ellipse cx="390" cy="430" rx="24" ry="30" fill="#111827"/>
+  <ellipse cx="510" cy="430" rx="24" ry="30" fill="#111827"/>
+  <ellipse cx="450" cy="500" rx="36" ry="28" fill="#111827"/>
+  <path d="M402 548C432 582 468 582 498 548" stroke="#111827" stroke-width="16" stroke-linecap="round"/>
+  <path d="M428 570C442 592 458 592 472 570" stroke="#FB7185" stroke-width="14" stroke-linecap="round"/>
+  <path d="M248 686C248 618 304 562 372 562H528C596 562 652 618 652 686V900H248V686Z" fill="#2563EB"/>
+  <path d="M322 620H578L532 704H368L322 620Z" fill="#1D4ED8"/>
+  <rect x="332" y="728" width="236" height="90" rx="24" fill="#1E40AF"/>
+  <text x="450" y="784" text-anchor="middle" fill="#F8FAFC" font-family="Avenir Next, Arial, sans-serif" font-size="44" font-weight="800">Coco</text>
+
+  <circle cx="450" cy="1030" r="132" fill="white" fill-opacity="0.9"/>
+  <circle cx="450" cy="1030" r="102" stroke="#60A5FA" stroke-width="16" stroke-dasharray="12 16"/>
+  <circle cx="450" cy="1030" r="56" fill="#2563EB"/>
+  <path d="M430 1010C430 997 439 988 452 988C465 988 474 997 474 1010V1018H482C492 1018 500 1026 500 1036V1070C500 1080 492 1088 482 1088H418C408 1088 400 1080 400 1070V1036C400 1026 408 1018 418 1018H430V1010Z" fill="white"/>
+
+  <text x="450" y="1300" text-anchor="middle" fill="#0F172A" font-family="Avenir Next, Arial, sans-serif" font-size="52" font-weight="800">Conectando con Coco</text>
+  <text x="450" y="1360" text-anchor="middle" fill="#475569" font-family="Avenir Next, Arial, sans-serif" font-size="28">Preparando microfono, audio y sesion de voz</text>
+  <rect x="280" y="1420" width="340" height="74" rx="37" fill="#DBEAFE"/>
+  <text x="450" y="1468" text-anchor="middle" fill="#1D4ED8" font-family="Avenir Next, Arial, sans-serif" font-size="30" font-weight="800">Un momento...</text>
+
+  <defs>
+    <linearGradient id="bg" x1="120" y1="80" x2="780" y2="1520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#DBEAFE"/>
+      <stop offset="0.5" stop-color="#EFF6FF"/>
+      <stop offset="1" stop-color="#F8FAFC"/>
+    </linearGradient>
+  </defs>
+</svg>
