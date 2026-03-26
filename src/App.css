@@ -392,12 +392,19 @@
   }
 }
 
-/* Video Element */
-.video-element {
+/* 3D Avatar */
+.avatar-model-container {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+}
+
+.avatar-model {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 100%;
+  min-height: 100%;
   background: #000;
+  --poster-color: transparent;
+  pointer-events: none;
 }

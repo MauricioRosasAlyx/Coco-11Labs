@@ -150,15 +150,35 @@ function PresenterVideo(props: {
           </div>
         </div>
       ) : (
-        <video
-          src="/presenter.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          className="video-element"
-        />
+        <div className="avatar-model-container">
+          <model-viewer
+            src="/coco-avatar.glb"
+            auto-rotate
+            auto-rotate-delay="0"
+            rotation-per-second="28deg"
+            disable-zoom
+            disable-pan
+            touch-action="none"
+            interaction-prompt="none"
+            camera-target="0m 0.15m 0m"
+            camera-orbit="0deg 84deg 3.4m"
+            min-camera-orbit="auto 84deg 3.4m"
+            max-camera-orbit="auto 84deg 3.4m"
+            field-of-view="36deg"
+            min-field-of-view="36deg"
+            max-field-of-view="36deg"
+            scale="1 1 1"
+            orientation="0deg 0deg 0deg"
+            className="avatar-model"
+            style={{
+              position: "absolute",
+              inset: "0",
+              width: "100%",
+              height: "100%",
+              display: "block",
+            }}
+          />
+        </div>
       )}
     </div>
   );
