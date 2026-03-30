@@ -21,21 +21,173 @@ enum DisplayOption {
   Totem = "totems",
 }
 
+type TopicKey =
+  | "demanda_fisica"
+  | "captura_flujo"
+  | "funnel_comercial"
+  | "espacio_layout"
+  | "inventario"
+  | "experiencia"
+  | "demografia"
+  | "credito"
+  | "ventas";
+
+type TopicDefinition = {
+  label: string;
+  summary: string;
+  imageSrc: string;
+  tags: string[];
+};
+
+type PresentationState = {
+  label: string;
+  summary: string;
+  imageSrc: string;
+  tags: string[];
+  topicKey: TopicKey | null;
+};
+
 const displayImages: Record<DisplayOption, string> = {
   [DisplayOption.Vitrina]: "/slides/vitrina.png",
   [DisplayOption.Tienda]: "/slides/tienda.png",
   [DisplayOption.Totem]: "/slides/totem.png",
 };
 
+const TOPIC_CATALOG: Record<TopicKey, TopicDefinition> = {
+  demanda_fisica: {
+    label: "Demanda Fisica",
+    summary:
+      "Coco esta hablando del trafico real de la tienda, entradas, salidas y volumen de visitantes observados.",
+    imageSrc: "/slides/demanda_fisica.png",
+    tags: ["trafico", "entradas", "visitas", "footfall"],
+  },
+  captura_flujo: {
+    label: "Captura de Flujo",
+    summary:
+      "Coco esta explicando cuantas personas pasan frente a la tienda, cuantas entran y donde se pierde demanda.",
+    imageSrc: "/slides/captura_flujo.png",
+    tags: ["captura", "fachada", "no capturados", "conversion de paso"],
+  },
+  funnel_comercial: {
+    label: "Funnel Comercial",
+    summary:
+      "Coco esta conectando entradas, presolicitudes, completadas, convertidas y ventas dentro del embudo de tienda.",
+    imageSrc: "/slides/funnel_comercial.png",
+    tags: ["funnel", "conversion", "presolicitudes", "ventas"],
+  },
+  espacio_layout: {
+    label: "Espacio y Layout",
+    summary:
+      "Coco esta describiendo heatmaps, zonas calientes, zonas frias y la exploracion del cliente dentro de la tienda.",
+    imageSrc: "/slides/espacio_layout.png",
+    tags: ["heatmap", "layout", "zonas", "exploracion"],
+  },
+  inventario: {
+    label: "Inventario",
+    summary:
+      "Coco esta relacionando inventario libre, categorias, stock y productividad economica del espacio.",
+    imageSrc: "/slides/inventario.png",
+    tags: ["stock", "categorias", "productividad", "mix comercial"],
+  },
+  experiencia: {
+    label: "Experiencia Cliente",
+    summary:
+      "Coco esta describiendo espera, colas, friccion y calidad de la experiencia dentro del punto de venta.",
+    imageSrc: "/slides/experiencia.png",
+    tags: ["colas", "espera", "friccion", "journey"],
+  },
+  demografia: {
+    label: "Demografia",
+    summary:
+      "Coco esta explicando el perfil del cliente que entra a la tienda y su relacion con la oferta comercial.",
+    imageSrc: "/slides/demografia.png",
+    tags: ["perfil", "mujeres", "adultos", "segmentacion"],
+  },
+  credito: {
+    label: "Credito",
+    summary:
+      "Coco esta hablando del proceso financiero, aprobacion, conversion crediticia y salud del funnel.",
+    imageSrc: "/slides/credito.png",
+    tags: ["credito", "aprobacion", "intencion", "formalizacion"],
+  },
+  ventas: {
+    label: "Ventas y Monetizacion",
+    summary:
+      "Coco esta enfocando la explicacion en venta neta, ticket, categorias lideres e ingreso por visitante.",
+    imageSrc: "/slides/ventas.png",
+    tags: ["venta neta", "ticket", "monetizacion", "ingreso por visitante"],
+  },
+};
+
+const TOPIC_ALIASES: Record<string, TopicKey> = {
+  demanda: "demanda_fisica",
+  demanda_fisica: "demanda_fisica",
+  demanda_real: "demanda_fisica",
+  trafico: "demanda_fisica",
+  trafico_real: "demanda_fisica",
+  flujo: "captura_flujo",
+  captura: "captura_flujo",
+  captura_de_flujo: "captura_flujo",
+  captura_flujo: "captura_flujo",
+  fachada: "captura_flujo",
+  no_captura: "captura_flujo",
+  embudo: "funnel_comercial",
+  funnel: "funnel_comercial",
+  funnel_comercial: "funnel_comercial",
+  conversion: "funnel_comercial",
+  layout: "espacio_layout",
+  espacio: "espacio_layout",
+  heatmap: "espacio_layout",
+  heatmaps: "espacio_layout",
+  espacio_layout: "espacio_layout",
+  tienda: "espacio_layout",
+  inventario: "inventario",
+  stock: "inventario",
+  experiencia: "experiencia",
+  experiencia_cliente: "experiencia",
+  colas: "experiencia",
+  espera: "experiencia",
+  demografia: "demografia",
+  perfil: "demografia",
+  cliente: "demografia",
+  credito: "credito",
+  financiero: "credito",
+  ventas: "ventas",
+  monetizacion: "ventas",
+  venta: "ventas",
+  comercial: "ventas",
+};
+
 const ELEVENLABS_AGENT_ID = import.meta.env.VITE_ELEVENLABS_AGENT_ID;
 const DEFAULT_VIEW_IMAGE = "/macropay-default.png";
+const DEFAULT_PRESENTATION: PresentationState = {
+  label: "Análisis de tema...",
+  summary:
+    "Cuando Coco use la herramienta, aqui mostraremos la imagen, el tema detectado y un resumen corto para acompanar la explicacion.",
+  imageSrc: DEFAULT_VIEW_IMAGE,
+  tags: ["tema", "imagen", "elevenlabs"],
+  topicKey: null,
+};
+
+function normalizeText(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "_");
+}
+
+function getStringValue(value: unknown) {
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
 
 function getDisplayOptionFromValue(value: unknown) {
   if (typeof value !== "string") {
     return null;
   }
 
-  const normalizedValue = value.trim().toLowerCase();
+  const normalizedValue = normalizeText(value);
 
   if (normalizedValue === DisplayOption.Vitrina) {
     return DisplayOption.Vitrina;
@@ -52,19 +204,92 @@ function getDisplayOptionFromValue(value: unknown) {
   return null;
 }
 
-function getDisplayOptionFromParameters(parameters?: ToolDetails) {
+function getValueFromParameters(
+  parameters: ToolDetails | undefined,
+  keys: string[],
+) {
   if (!parameters) {
     return null;
   }
 
-  return (
-    getDisplayOptionFromValue(parameters.dispositiva) ??
-    getDisplayOptionFromValue(parameters.diapositiva) ??
-    getDisplayOptionFromValue(parameters.opcion) ??
-    getDisplayOptionFromValue(parameters.option) ??
-    getDisplayOptionFromValue(parameters.tipo) ??
-    getDisplayOptionFromValue(parameters.view)
-  );
+  for (const key of keys) {
+    const value = getStringValue(parameters[key]);
+
+    if (value) {
+      return value;
+    }
+  }
+
+  return null;
+}
+
+function getDisplayOptionFromParameters(parameters?: ToolDetails) {
+  const value = getValueFromParameters(parameters, [
+    "dispositiva",
+    "diapositiva",
+    "opcion",
+    "option",
+    "tipo",
+    "view",
+  ]);
+
+  return value ? getDisplayOptionFromValue(value) : null;
+}
+
+function getTopicKeyFromValue(value: unknown) {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalizedValue = normalizeText(value);
+  return TOPIC_ALIASES[normalizedValue] ?? null;
+}
+
+function getTopicKeyFromParameters(parameters?: ToolDetails) {
+  const value = getValueFromParameters(parameters, [
+    "tema",
+    "topic",
+    "categoria",
+    "asunto",
+    "dimension",
+    "insight",
+    "seccion",
+  ]);
+
+  return value ? getTopicKeyFromValue(value) : null;
+}
+
+function buildPresentation(parameters?: ToolDetails) {
+  const topicKey = getTopicKeyFromParameters(parameters);
+  const displayOption = getDisplayOptionFromParameters(parameters);
+
+  if (topicKey) {
+    const topic = TOPIC_CATALOG[topicKey];
+
+    return {
+      label: topic.label,
+      summary: topic.summary,
+      imageSrc: topic.imageSrc,
+      tags: topic.tags,
+      topicKey,
+    } satisfies PresentationState;
+  }
+
+  if (displayOption) {
+    const label =
+      displayOption.charAt(0).toUpperCase() + displayOption.slice(1);
+
+    return {
+      label,
+      summary:
+        "Coco solicito mostrar una vista puntual de apoyo para su explicacion.",
+      imageSrc: displayImages[displayOption],
+      tags: ["visual", "soporte", displayOption],
+      topicKey: null,
+    } satisfies PresentationState;
+  }
+
+  return null;
 }
 
 function PresenterVideo(props: {
@@ -187,13 +412,8 @@ function PresenterVideo(props: {
 export default function App() {
   const [screen, setScreen] = useState<Screen>("home");
   const [status, setStatus] = useState("disconnected");
-  const [lastToolEvent, setLastToolEvent] = useState<ToolEvent | null>(null);
-  const [currentDisplay, setCurrentDisplay] = useState<DisplayOption | null>(
-    null,
-  );
-
-  const currentSlide =
-    currentDisplay === null ? null : displayImages[currentDisplay];
+  const [presentation, setPresentation] =
+    useState<PresentationState>(DEFAULT_PRESENTATION);
 
   const trackToolEvent = (
     source: ToolEvent["source"],
@@ -208,17 +428,21 @@ export default function App() {
       ...extra,
     };
 
-    // console.log("Tool event:", event);
-    setLastToolEvent(event);
+    const nextPresentation = buildPresentation(event.parameters);
 
-    const displayOption = getDisplayOptionFromParameters(event.parameters);
-
-    if (displayOption === null) {
-      return false;
+    if (nextPresentation) {
+      setPresentation(nextPresentation);
+      return true;
     }
 
-    setCurrentDisplay(displayOption);
-    return true;
+    return false;
+  };
+
+  const handlePresentationTool = async (parameters: ToolDetails) => {
+    trackToolEvent("client", "mostrarTema", crypto.randomUUID(), {
+      parameters,
+    });
+    return "tema actualizado";
   };
 
   const conversation = useConversation({
@@ -227,12 +451,9 @@ export default function App() {
         setScreen(screen);
         return "ok";
       },
-      diapositivas: async (parameters: ToolDetails) => {
-        trackToolEvent("client", "diapositivas", crypto.randomUUID(), {
-          parameters,
-        });
-        return "tool diapositivas recibida";
-      },
+      diapositivas: handlePresentationTool,
+      mostrarTema: handlePresentationTool,
+      mostrarImagenTema: handlePresentationTool,
     },
     onStatusChange: ({ status }) => setStatus(status),
     onError: (message, context) => {
@@ -296,34 +517,18 @@ export default function App() {
         <div className="app-content">
           <div className="slide-card">
             <div className="slide-header">
-              <span className="display-indicator">
-                {currentDisplay === null
-                  ? "Sin vista"
-                  : currentDisplay.charAt(0).toUpperCase() +
-                    currentDisplay.slice(1)}
-              </span>
+              <span className="display-indicator">{presentation.label}</span>
+              {screen !== "home" ? (
+                <span className="screen-indicator">{screen}</span>
+              ) : null}
             </div>
 
-            {currentSlide ? (
-              <img
-                src={currentSlide}
-                alt={currentDisplay ?? "Vista"}
-                className="slide-image"
-              />
-            ) : (
-              <img
-                src={DEFAULT_VIEW_IMAGE}
-                alt="Vista por defecto Macropay"
-                className="slide-image"
-              />
-            )}
+            <img
+              src={presentation.imageSrc}
+              alt={presentation.label}
+              className="slide-image"
+            />
           </div>
-
-          {/* {lastToolEvent && (
-            <pre className="tool-event-log">
-              {JSON.stringify(lastToolEvent, null, 2)}
-            </pre>
-          )} */}
         </div>
 
         <PresenterVideo status={status} onStart={start} onStop={stop} />
