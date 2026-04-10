@@ -1,5 +1,5 @@
 import { useConversation } from "@elevenlabs/react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
 type Screen = "home" | "plans" | "checkout";
@@ -13,6 +13,28 @@ type ToolEvent = {
   parameters?: ToolDetails;
   isError?: boolean;
   isCalled?: boolean;
+};
+
+type ChatMessage = {
+  id: string;
+  role: "user" | "agent" | "system";
+  text: string;
+  isStreaming?: boolean;
+};
+
+type AssistantTab = "voice" | "chat";
+
+type ConversationMessage = {
+  source?: "ai" | "user";
+  role?: "agent" | "user";
+  message?: string;
+  event_id?: number;
+};
+
+type AgentChatResponsePart = {
+  text?: string;
+  type?: "start" | "delta" | "stop";
+  event_id?: number;
 };
 
 enum DisplayOption {
@@ -409,11 +431,115 @@ function PresenterVideo(props: {
   );
 }
 
+function ChatPanel(props: {
+  status: string;
+  draft: string;
+  messages: ChatMessage[];
+  onDraftChange: (value: string) => void;
+  onSend: () => void | Promise<void>;
+}) {
+  const { status, draft, messages, onDraftChange, onSend } = props;
+  const isConnected = status === "connected";
+  const isConnecting = status === "connecting";
+  const messagesRef = useRef<HTMLDivElement | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const container = messagesRef.current;
+    const end = messagesEndRef.current;
+
+    if (!container || !end) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      end.scrollIntoView({
+        block: "end",
+        behavior: "smooth",
+      });
+    });
+  }, [messages]);
+
+  return (
+    <div className="chat-card">
+      <div className="chat-header">
+        <div>
+          <div className="chat-title">Chat</div>
+          <div className="chat-subtitle">
+            {isConnected
+              ? "Esta es una conversacion independiente y se mantiene activa."
+              : isConnecting
+                ? "Conectando el chat con Coco..."
+                : "Abre esta pestaña para iniciar una conversacion de chat aparte."}
+          </div>
+        </div>
+      </div>
+
+      <div className="chat-messages" ref={messagesRef}>
+        {messages.length > 0 ? (
+          <>
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`chat-bubble chat-bubble-${message.role} ${
+                  message.isStreaming ? "chat-bubble-streaming" : ""
+                }`}
+              >
+                {message.text}
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </>
+        ) : (
+          <div className="chat-empty">
+            Aqui apareceran los mensajes de texto de la conversacion.
+          </div>
+        )}
+      </div>
+
+      <div className="chat-input-row">
+        <textarea
+          value={draft}
+          onChange={(event) => onDraftChange(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+              event.preventDefault();
+              onSend();
+            }
+          }}
+          placeholder="Escribe un mensaje para Coco"
+          className="chat-input"
+          rows={3}
+          disabled={!isConnected}
+        />
+        <button
+          onClick={onSend}
+          className="chat-send-btn"
+          disabled={!isConnected || !draft.trim()}
+        >
+          Enviar
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [screen, setScreen] = useState<Screen>("home");
-  const [status, setStatus] = useState("disconnected");
+  const [voiceStatus, setVoiceStatus] = useState("disconnected");
+  const [chatStatus, setChatStatus] = useState("disconnected");
   const [presentation, setPresentation] =
     useState<PresentationState>(DEFAULT_PRESENTATION);
+  const [activeTab, setActiveTab] = useState<AssistantTab>("voice");
+  const [showVoiceEndDialog, setShowVoiceEndDialog] = useState(false);
+  const [chatDraft, setChatDraft] = useState("");
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: crypto.randomUUID(),
+      role: "system",
+      text: "El chat y la llamada funcionan como conversaciones separadas.",
+    },
+  ]);
 
   const trackToolEvent = (
     source: ToolEvent["source"],
@@ -445,7 +571,118 @@ export default function App() {
     return "tema actualizado";
   };
 
-  const conversation = useConversation({
+  const appendChatMessage = (message: ChatMessage) => {
+    setMessages((current) => [...current, message]);
+  };
+
+  const startStreamingAgentMessage = (text: string) => {
+    const initialText = text.trim();
+
+    if (!initialText || initialText === "...") {
+      return;
+    }
+
+    setMessages((current) => {
+      const next = [...current];
+      const index = next.findLastIndex((message) => message.isStreaming);
+
+      if (index !== -1) {
+        next[index] = {
+          ...next[index],
+          text: initialText,
+        };
+
+        return next;
+      }
+
+      return [
+        ...current,
+        {
+          id: crypto.randomUUID(),
+          role: "agent",
+          text: initialText,
+          isStreaming: true,
+        },
+      ];
+    });
+  };
+
+  const updateStreamingAgentMessage = (textPart: string) => {
+    setMessages((current) => {
+      const next = [...current];
+      const index = next.findLastIndex((message) => message.isStreaming);
+
+      if (index === -1) {
+        return [
+          ...current,
+          {
+            id: crypto.randomUUID(),
+            role: "agent",
+            text: textPart,
+            isStreaming: true,
+          },
+        ];
+      }
+
+      next[index] = {
+        ...next[index],
+        text: `${next[index].text}${textPart}`,
+      };
+
+      return next;
+    });
+  };
+
+  const finalizeStreamingAgentMessage = (fallbackText?: string) => {
+    setMessages((current) => {
+      const next = [...current];
+      const index = next.findLastIndex((message) => message.isStreaming);
+      const normalizedFallback = fallbackText?.trim();
+
+      if (index === -1) {
+        if (!normalizedFallback) {
+          return current;
+        }
+
+        const lastAgentMessage = [...current]
+          .reverse()
+          .find((message) => message.role === "agent" && !message.isStreaming);
+
+        if (lastAgentMessage?.text.trim() === normalizedFallback) {
+          return current;
+        }
+
+        return [
+          ...current,
+          {
+            id: crypto.randomUUID(),
+            role: "agent",
+            text: normalizedFallback,
+          },
+        ];
+      }
+
+      const finalText = normalizedFallback || next[index].text.trim();
+      const previousAgentMessage = [...next.slice(0, index)]
+        .reverse()
+        .find((message) => message.role === "agent" && !message.isStreaming);
+
+      if (previousAgentMessage?.text.trim() === finalText) {
+        next.splice(index, 1);
+        return next;
+      }
+
+      next[index] = {
+        ...next[index],
+        text: finalText,
+        isStreaming: false,
+      };
+
+      return next;
+    });
+  };
+
+  const sharedConversationConfig = {
     clientTools: {
       setScreen: async ({ screen }: { screen: Screen }) => {
         setScreen(screen);
@@ -455,31 +692,106 @@ export default function App() {
       mostrarTema: handlePresentationTool,
       mostrarImagenTema: handlePresentationTool,
     },
-    onStatusChange: ({ status }) => setStatus(status),
-    onError: (message, context) => {
-      console.error("ElevenLabs error:", message, context);
-      setStatus("error");
-    },
-    onUnhandledClientToolCall: (tool) => {
+    onUnhandledClientToolCall: (tool: {
+      tool_name: string;
+      tool_call_id: string;
+      parameters?: ToolDetails;
+    }) => {
       trackToolEvent("client", tool.tool_name, tool.tool_call_id, {
         parameters: tool.parameters,
       });
     },
-    onAgentToolRequest: (tool) => {
+    onAgentToolRequest: (tool: {
+      tool_name: string;
+      tool_call_id: string;
+      tool_type: string;
+    }) => {
       trackToolEvent("request", tool.tool_name, tool.tool_call_id, {
         toolType: tool.tool_type,
       });
     },
-    onAgentToolResponse: (tool) => {
+    onAgentToolResponse: (tool: {
+      tool_name: string;
+      tool_call_id: string;
+      tool_type: string;
+      is_error: boolean;
+      is_called: boolean;
+    }) => {
       trackToolEvent("response", tool.tool_name, tool.tool_call_id, {
         toolType: tool.tool_type,
         isError: tool.is_error,
         isCalled: tool.is_called,
       });
     },
+  };
+
+  const voiceConversation = useConversation({
+    ...sharedConversationConfig,
+    onStatusChange: ({ status }) => setVoiceStatus(status),
+    onError: (message, context) => {
+      console.error("ElevenLabs voice error:", message, context);
+      setVoiceStatus("error");
+    },
   });
 
-  const start = async () => {
+  const chatConversation = useConversation({
+    ...sharedConversationConfig,
+    textOnly: true,
+    onAgentChatResponsePart: (part: AgentChatResponsePart) => {
+      if (part.type === "start") {
+        startStreamingAgentMessage(part.text ?? "...");
+        return;
+      }
+
+      if (part.type === "delta" && part.text) {
+        updateStreamingAgentMessage(part.text);
+        return;
+      }
+
+      if (part.type === "stop") {
+        finalizeStreamingAgentMessage();
+      }
+    },
+    onMessage: (message: ConversationMessage) => {
+      const text = message.message?.trim();
+
+      if (!text) {
+        return;
+      }
+
+      if (message.source === "ai" || message.role === "agent") {
+        finalizeStreamingAgentMessage(text);
+        return;
+      }
+
+      if (message.source === "user" && activeTab === "chat") {
+        setMessages((current) => {
+          const lastMessage = current.at(-1);
+
+          if (lastMessage?.role === "user" && lastMessage.text === text) {
+            return current;
+          }
+
+          return [...current, { id: crypto.randomUUID(), role: "user", text }];
+        });
+      }
+    },
+    onStatusChange: ({ status }) => setChatStatus(status),
+    onError: (message, context) => {
+      console.error("ElevenLabs chat error:", message, context);
+      setChatStatus("error");
+      setMessages((current) => [
+        ...current,
+        {
+          id: crypto.randomUUID(),
+          role: "system",
+          text: "No se pudo continuar el chat con Coco. Intenta abrir la pestaña otra vez.",
+        },
+      ]);
+    },
+  });
+
+  const startVoiceSession = async () => {
     let grantedStream: MediaStream | null = null;
 
     try {
@@ -497,18 +809,94 @@ export default function App() {
       console.error(
         "Missing VITE_ELEVENLABS_AGENT_ID. Define it in your .env file.",
       );
-      setStatus("error");
+      setVoiceStatus("error");
       return;
     }
 
-    await conversation.startSession({
+    await voiceConversation.startSession({
       agentId: ELEVENLABS_AGENT_ID,
       connectionType: "webrtc",
     });
   };
 
-  const stop = async () => {
-    await conversation.endSession();
+  const stopVoiceSession = async () => {
+    await voiceConversation.endSession();
+  };
+
+  const ensureChatSession = async () => {
+    if (chatStatus === "connected" || chatStatus === "connecting") {
+      return;
+    }
+
+    if (!ELEVENLABS_AGENT_ID) {
+      console.error(
+        "Missing VITE_ELEVENLABS_AGENT_ID. Define it in your .env file.",
+      );
+      setChatStatus("error");
+      return;
+    }
+
+    await chatConversation.startSession({
+      agentId: ELEVENLABS_AGENT_ID,
+      connectionType: "websocket",
+      textOnly: true,
+    });
+  };
+
+  const openChatTab = async () => {
+    setActiveTab("chat");
+    await ensureChatSession();
+  };
+
+  const handleAssistantTabChange = async (nextTab: AssistantTab) => {
+    if (nextTab === activeTab) {
+      return;
+    }
+
+    if (
+      nextTab === "chat" &&
+      (voiceStatus === "connected" || voiceStatus === "connecting")
+    ) {
+      setShowVoiceEndDialog(true);
+      return;
+    }
+
+    if (nextTab === "chat") {
+      await openChatTab();
+      return;
+    }
+
+    setActiveTab("voice");
+  };
+
+  const confirmSwitchToChat = async () => {
+    setShowVoiceEndDialog(false);
+    await stopVoiceSession();
+    await openChatTab();
+  };
+
+  const cancelSwitchToChat = () => {
+    setShowVoiceEndDialog(false);
+  };
+
+  const handleSendChatMessage = async () => {
+    const text = chatDraft.trim();
+
+    if (!text) {
+      return;
+    }
+
+    if (chatStatus !== "connected") {
+      await ensureChatSession();
+    }
+
+    if (chatStatus !== "connected" && chatConversation.status !== "connected") {
+      return;
+    }
+
+    chatConversation.sendUserMessage(text);
+    appendChatMessage({ id: crypto.randomUUID(), role: "user", text });
+    setChatDraft("");
   };
 
   return (
@@ -531,8 +919,89 @@ export default function App() {
           </div>
         </div>
 
-        <PresenterVideo status={status} onStart={start} onStop={stop} />
+        <div className="assistant-column">
+          <div className="assistant-shell">
+            <div className="assistant-tabs" role="tablist" aria-label="Canal de Coco">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === "voice"}
+                className={`assistant-tab ${activeTab === "voice" ? "assistant-tab-active" : ""}`}
+                onClick={() => void handleAssistantTabChange("voice")}
+              >
+                Voz
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === "chat"}
+                className={`assistant-tab ${activeTab === "chat" ? "assistant-tab-active" : ""}`}
+                onClick={() => void handleAssistantTabChange("chat")}
+              >
+                Chat
+              </button>
+            </div>
+
+            <div className="assistant-panel">
+              {activeTab === "voice" ? (
+                <PresenterVideo
+                  status={voiceStatus}
+                  onStart={startVoiceSession}
+                  onStop={stopVoiceSession}
+                />
+              ) : (
+                <ChatPanel
+                  status={chatStatus}
+                  draft={chatDraft}
+                  messages={messages}
+                  onDraftChange={(value) => {
+                    setChatDraft(value);
+                    if (value.trim()) {
+                      chatConversation.sendUserActivity();
+                    }
+                  }}
+                  onSend={handleSendChatMessage}
+                />
+              )}
+            </div>
+          </div>
+        </div>
       </div>
+
+      {showVoiceEndDialog ? (
+        <div className="modal-backdrop" role="presentation">
+          <div
+            className="confirm-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="switch-chat-title"
+          >
+            <h2 id="switch-chat-title" className="confirm-modal-title">
+              Esto terminara la llamada
+            </h2>
+            <p className="confirm-modal-copy">
+              Si cambias a la pestaña de chat, la llamada de voz actual se cerrara
+              y seguiremos en una conversacion distinta por texto.
+            </p>
+            <div className="confirm-modal-actions">
+              <button
+                type="button"
+                className="modal-secondary-btn"
+                onClick={cancelSwitchToChat}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="modal-primary-btn"
+                onClick={() => void confirmSwitchToChat()}
+              >
+                Cambiar a chat
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
