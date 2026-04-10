@@ -182,6 +182,7 @@ const TOPIC_ALIASES: Record<string, TopicKey> = {
 
 const ELEVENLABS_AGENT_ID = import.meta.env.VITE_ELEVENLABS_AGENT_ID;
 const DEFAULT_VIEW_IMAGE = "/macropay-default.png";
+const STREAMING_PLACEHOLDER_TEXT = "Coco está respondiendo...";
 const DEFAULT_PRESENTATION: PresentationState = {
   label: "Análisis de tema...",
   summary:
@@ -202,6 +203,20 @@ function normalizeText(value: string) {
 
 function getStringValue(value: unknown) {
   return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function findLastStreamingMessageIndex(messages: ChatMessage[]) {
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    if (messages[index].isStreaming) {
+      return index;
+    }
+  }
+
+  return -1;
+}
+
+function getLastMessage(messages: ChatMessage[]) {
+  return messages.length > 0 ? messages[messages.length - 1] : undefined;
 }
 
 function getDisplayOptionFromValue(value: unknown) {
@@ -540,6 +555,7 @@ export default function App() {
       text: "El chat y la llamada funcionan como conversaciones separadas.",
     },
   ]);
+  const dateRangeTag = "01-03-2026 a 25-03-2026";
 
   const trackToolEvent = (
     source: ToolEvent["source"],
@@ -575,6 +591,33 @@ export default function App() {
     setMessages((current) => [...current, message]);
   };
 
+  const ensureStreamingAgentPlaceholder = () => {
+    setMessages((current) => {
+      const hasStreamingMessage =
+        findLastStreamingMessageIndex(current) !== -1;
+
+      if (hasStreamingMessage) {
+        return current;
+      }
+
+      return [
+        ...current,
+        {
+          id: crypto.randomUUID(),
+          role: "agent",
+          text: STREAMING_PLACEHOLDER_TEXT,
+          isStreaming: true,
+        },
+      ];
+    });
+  };
+
+  const clearStreamingAgentPlaceholder = () => {
+    setMessages((current) =>
+      current.filter((message) => !message.isStreaming),
+    );
+  };
+
   const startStreamingAgentMessage = (text: string) => {
     const initialText = text.trim();
 
@@ -584,7 +627,7 @@ export default function App() {
 
     setMessages((current) => {
       const next = [...current];
-      const index = next.findLastIndex((message) => message.isStreaming);
+      const index = findLastStreamingMessageIndex(next);
 
       if (index !== -1) {
         next[index] = {
@@ -610,7 +653,7 @@ export default function App() {
   const updateStreamingAgentMessage = (textPart: string) => {
     setMessages((current) => {
       const next = [...current];
-      const index = next.findLastIndex((message) => message.isStreaming);
+      const index = findLastStreamingMessageIndex(next);
 
       if (index === -1) {
         return [
@@ -626,7 +669,10 @@ export default function App() {
 
       next[index] = {
         ...next[index],
-        text: `${next[index].text}${textPart}`,
+        text:
+          next[index].text === STREAMING_PLACEHOLDER_TEXT
+            ? textPart
+            : `${next[index].text}${textPart}`,
       };
 
       return next;
@@ -636,7 +682,7 @@ export default function App() {
   const finalizeStreamingAgentMessage = (fallbackText?: string) => {
     setMessages((current) => {
       const next = [...current];
-      const index = next.findLastIndex((message) => message.isStreaming);
+      const index = findLastStreamingMessageIndex(next);
       const normalizedFallback = fallbackText?.trim();
 
       if (index === -1) {
@@ -663,6 +709,12 @@ export default function App() {
       }
 
       const finalText = normalizedFallback || next[index].text.trim();
+
+      if (!normalizedFallback && finalText === STREAMING_PLACEHOLDER_TEXT) {
+        next.splice(index, 1);
+        return next;
+      }
+
       const previousAgentMessage = [...next.slice(0, index)]
         .reverse()
         .find((message) => message.role === "agent" && !message.isStreaming);
@@ -766,7 +818,7 @@ export default function App() {
 
       if (message.source === "user" && activeTab === "chat") {
         setMessages((current) => {
-          const lastMessage = current.at(-1);
+          const lastMessage = getLastMessage(current);
 
           if (lastMessage?.role === "user" && lastMessage.text === text) {
             return current;
@@ -780,6 +832,7 @@ export default function App() {
     onError: (message, context) => {
       console.error("ElevenLabs chat error:", message, context);
       setChatStatus("error");
+      clearStreamingAgentPlaceholder();
       setMessages((current) => [
         ...current,
         {
@@ -896,6 +949,7 @@ export default function App() {
 
     chatConversation.sendUserMessage(text);
     appendChatMessage({ id: crypto.randomUUID(), role: "user", text });
+    ensureStreamingAgentPlaceholder();
     setChatDraft("");
   };
 
@@ -921,25 +975,35 @@ export default function App() {
 
         <div className="assistant-column">
           <div className="assistant-shell">
-            <div className="assistant-tabs" role="tablist" aria-label="Canal de Coco">
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeTab === "voice"}
-                className={`assistant-tab ${activeTab === "voice" ? "assistant-tab-active" : ""}`}
-                onClick={() => void handleAssistantTabChange("voice")}
+            <div className="assistant-topbar">
+              <div
+                className="assistant-tabs"
+                role="tablist"
+                aria-label="Canal de Coco"
               >
-                Voz
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={activeTab === "chat"}
-                className={`assistant-tab ${activeTab === "chat" ? "assistant-tab-active" : ""}`}
-                onClick={() => void handleAssistantTabChange("chat")}
-              >
-                Chat
-              </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeTab === "voice"}
+                  className={`assistant-tab ${activeTab === "voice" ? "assistant-tab-active" : ""}`}
+                  onClick={() => void handleAssistantTabChange("voice")}
+                >
+                  Voz
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeTab === "chat"}
+                  className={`assistant-tab ${activeTab === "chat" ? "assistant-tab-active" : ""}`}
+                  onClick={() => void handleAssistantTabChange("chat")}
+                >
+                  Chat
+                </button>
+              </div>
+
+              <div className="date-range-pill" aria-live="polite">
+                <span className="date-range-value">{dateRangeTag}</span>
+              </div>
             </div>
 
             <div className="assistant-panel">

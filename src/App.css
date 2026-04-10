@@ -45,6 +45,14 @@
   min-height: 0;
 }
 
+.assistant-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .assistant-tabs {
   display: inline-flex;
   gap: 10px;
@@ -69,6 +77,32 @@
 .assistant-tab-active {
   background: #1d4ed8;
   color: #fff;
+}
+
+.date-range-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  min-height: 54px;
+}
+
+.date-range-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.date-range-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
 }
 
 .assistant-panel {
@@ -374,6 +408,17 @@
 .modal-primary-btn {
   background: #dc2626;
   color: #fff;
+}
+
+@media (max-width: 900px) {
+  .assistant-topbar {
+    align-items: stretch;
+  }
+
+  .date-range-pill {
+    justify-content: space-between;
+    width: 100%;
+  }
 }
 
 /* Video Controls Bar */
