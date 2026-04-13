@@ -412,35 +412,7 @@ function PresenterVideo(props: {
           </div>
         </div>
       ) : (
-        <div className="avatar-model-container">
-          <model-viewer
-            src="/coco-avatar.glb"
-            auto-rotate
-            auto-rotate-delay="0"
-            rotation-per-second="28deg"
-            disable-zoom
-            disable-pan
-            touch-action="none"
-            interaction-prompt="none"
-            camera-target="0m 0.15m 0m"
-            camera-orbit="0deg 84deg 3.4m"
-            min-camera-orbit="auto 84deg 3.4m"
-            max-camera-orbit="auto 84deg 3.4m"
-            field-of-view="36deg"
-            min-field-of-view="36deg"
-            max-field-of-view="36deg"
-            scale="1 1 1"
-            orientation="0deg 0deg 0deg"
-            className="avatar-model"
-            style={{
-              position: "absolute",
-              inset: "0",
-              width: "100%",
-              height: "100%",
-              display: "block",
-            }}
-          />
-        </div>
+        <img src="/coco-live.jpeg" alt="Coco" className="live-avatar-image" />
       )}
     </div>
   );
@@ -555,7 +527,7 @@ export default function App() {
       text: "El chat y la llamada funcionan como conversaciones separadas.",
     },
   ]);
-  const dateRangeTag = "01-03-2026 a 25-03-2026";
+  const dateRangeTag = "01-03-2026 a 29-03-2026";
 
   const trackToolEvent = (
     source: ToolEvent["source"],
@@ -593,8 +565,7 @@ export default function App() {
 
   const ensureStreamingAgentPlaceholder = () => {
     setMessages((current) => {
-      const hasStreamingMessage =
-        findLastStreamingMessageIndex(current) !== -1;
+      const hasStreamingMessage = findLastStreamingMessageIndex(current) !== -1;
 
       if (hasStreamingMessage) {
         return current;
@@ -613,9 +584,7 @@ export default function App() {
   };
 
   const clearStreamingAgentPlaceholder = () => {
-    setMessages((current) =>
-      current.filter((message) => !message.isStreaming),
-    );
+    setMessages((current) => current.filter((message) => !message.isStreaming));
   };
 
   const startStreamingAgentMessage = (text: string) => {
@@ -1044,8 +1013,8 @@ export default function App() {
               Esto terminara la llamada
             </h2>
             <p className="confirm-modal-copy">
-              Si cambias a la pestaña de chat, la llamada de voz actual se cerrara
-              y seguiremos en una conversacion distinta por texto.
+              Si cambias a la pestaña de chat, la llamada de voz actual se
+              cerrara y seguiremos en una conversacion distinta por texto.
             </p>
             <div className="confirm-modal-actions">
               <button

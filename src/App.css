@@ -709,21 +709,14 @@
   }
 }
 
-/* 3D Avatar */
-.avatar-model-container {
+.live-avatar-image {
   position: absolute;
   inset: 0;
-}
-
-.avatar-model {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
   display: block;
-  width: 100% !important;
-  height: 100% !important;
-  min-width: 100%;
-  min-height: 100%;
-  background: #000;
-  --poster-color: transparent;
-  pointer-events: none;
 }
 
 @media (max-width: 980px) {
