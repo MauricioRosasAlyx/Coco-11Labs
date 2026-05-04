@@ -1,0 +1,2507 @@
+{
+  "meta": {
+    "generatedAt": "2026-04-27T14:32:11",
+    "sourceAperturas": "C:\\Users\\x\\Documents\\Proyectos\\MacroPay\\Coco-11Labs\\src\\data\\aperturasKnowledgeBase.json",
+    "sourceCierres": "C:\\Users\\x\\Documents\\Proyectos\\MacroPay\\Coco-11Labs\\src\\data\\cierresKnowledgeBase.json",
+    "totalEntries": 158,
+    "withAperturasAndCierres": 137,
+    "onlyAperturas": 1,
+    "onlyCierres": 20
+  },
+  "entries": [
+    {
+      "canonicalKey": "code:1009",
+      "storeCode": "1009",
+      "canonicalLabel": "1009 - Tixcokob",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "1009 - Tixcokob"
+      ],
+      "allAliases": [
+        "1009 - Tixcokob"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1025",
+      "storeCode": "1025",
+      "canonicalLabel": "1025 - Uman",
+      "aperturaAliases": [
+        "1025 - Uman"
+      ],
+      "cierreAliases": [
+        "1025 - Uman"
+      ],
+      "allAliases": [
+        "1025 - Uman"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1033",
+      "storeCode": "1033",
+      "canonicalLabel": "1033 - Maxcanu",
+      "aperturaAliases": [
+        "1033 - Maxcanu"
+      ],
+      "cierreAliases": [
+        "1033 - Maxcanu"
+      ],
+      "allAliases": [
+        "1033 - Maxcanu"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1037",
+      "storeCode": "1037",
+      "canonicalLabel": "1037 - Visente Solís",
+      "aperturaAliases": [
+        "1037 - Visente Solís"
+      ],
+      "cierreAliases": [
+        "1037 - Visente Solís"
+      ],
+      "allAliases": [
+        "1037 - Visente Solís"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1068",
+      "storeCode": "1068",
+      "canonicalLabel": "1068 - Chemax",
+      "aperturaAliases": [
+        "1068 - Chemax"
+      ],
+      "cierreAliases": [
+        "1068 - Chemax"
+      ],
+      "allAliases": [
+        "1068 - Chemax"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "label:1080 50 sur",
+      "storeCode": null,
+      "canonicalLabel": "1080 50 sur",
+      "aperturaAliases": [
+        "1080 50 sur"
+      ],
+      "cierreAliases": [
+        "1080 50 sur"
+      ],
+      "allAliases": [
+        "1080 50 sur"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1082",
+      "storeCode": "1082",
+      "canonicalLabel": "1082 - Mulchchen",
+      "aperturaAliases": [
+        "1082 - Mulchchen"
+      ],
+      "cierreAliases": [
+        "1082 - Mulchchen"
+      ],
+      "allAliases": [
+        "1082 - Mulchchen"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1110",
+      "storeCode": "1110",
+      "canonicalLabel": "1110 - Miguel Hidalgo",
+      "aperturaAliases": [
+        "1110 - Miguel Hidalgo"
+      ],
+      "cierreAliases": [],
+      "allAliases": [
+        "1110 - Miguel Hidalgo"
+      ],
+      "hasAperturas": true,
+      "hasCierres": false
+    },
+    {
+      "canonicalKey": "label:1110 miguel hidalgo",
+      "storeCode": null,
+      "canonicalLabel": "1110 Miguel Hidalgo",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "1110 Miguel Hidalgo"
+      ],
+      "allAliases": [
+        "1110 Miguel Hidalgo"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1116",
+      "storeCode": "1116",
+      "canonicalLabel": "1116 - Seye",
+      "aperturaAliases": [
+        "1116 - Seye"
+      ],
+      "cierreAliases": [
+        "1116 - Seye"
+      ],
+      "allAliases": [
+        "1116 - Seye"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1120",
+      "storeCode": "1120",
+      "canonicalLabel": "1120 - Fco Montejo 3",
+      "aperturaAliases": [
+        "1120 - Fco Montejo 3"
+      ],
+      "cierreAliases": [
+        "1120 - Fco Montejo 3"
+      ],
+      "allAliases": [
+        "1120 - Fco Montejo 3"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1195",
+      "storeCode": "1195",
+      "canonicalLabel": "1195 - Jardines de norte",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "1195 - Jardines de norte"
+      ],
+      "allAliases": [
+        "1195 - Jardines de norte"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1215",
+      "storeCode": "1215",
+      "canonicalLabel": "1215 - Paseos De Opichen",
+      "aperturaAliases": [
+        "1215 - Paseos de Opichen"
+      ],
+      "cierreAliases": [
+        "1215 - Paseos De Opichen"
+      ],
+      "allAliases": [
+        "1215 - Paseos De Opichen",
+        "1215 - Paseos de Opichen"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1236",
+      "storeCode": "1236",
+      "canonicalLabel": "1236 - Boulevards de Oriente",
+      "aperturaAliases": [
+        "1236 - Boulevards de Oriente"
+      ],
+      "cierreAliases": [
+        "1236 - Boulevards de Oriente"
+      ],
+      "allAliases": [
+        "1236 - Boulevards de Oriente"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1244",
+      "storeCode": "1244",
+      "canonicalLabel": "1244 - Gran Santa Fe",
+      "aperturaAliases": [
+        "1244 - Gran Santa Fe"
+      ],
+      "cierreAliases": [
+        "1244 - Gran Santa Fe"
+      ],
+      "allAliases": [
+        "1244 - Gran Santa Fe"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1248",
+      "storeCode": "1248",
+      "canonicalLabel": "1248 - Real Montejo",
+      "aperturaAliases": [
+        "1248 - Real Montejo"
+      ],
+      "cierreAliases": [
+        "1248 - Real Montejo"
+      ],
+      "allAliases": [
+        "1248 - Real Montejo"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1258",
+      "storeCode": "1258",
+      "canonicalLabel": "1258 - Mérida Pedro Infante",
+      "aperturaAliases": [
+        "1258 - Pedro Infante"
+      ],
+      "cierreAliases": [
+        "1258 - Mérida Pedro Infante"
+      ],
+      "allAliases": [
+        "1258 - Mérida Pedro Infante",
+        "1258 - Pedro Infante"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1261",
+      "storeCode": "1261",
+      "canonicalLabel": "1261 - Conkal 1",
+      "aperturaAliases": [
+        "1261 - Conkal 1"
+      ],
+      "cierreAliases": [
+        "1261 - Conkal 1"
+      ],
+      "allAliases": [
+        "1261 - Conkal 1"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1269",
+      "storeCode": "1269",
+      "canonicalLabel": "1269 - San Marcos Sustentable",
+      "aperturaAliases": [
+        "1269 - San Marcos Sustentable"
+      ],
+      "cierreAliases": [
+        "1269 - San Marcos Sustentable"
+      ],
+      "allAliases": [
+        "1269 - San Marcos Sustentable"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1279",
+      "storeCode": "1279",
+      "canonicalLabel": "1279 - Cri Cri",
+      "aperturaAliases": [
+        "1279 - Cri Cri"
+      ],
+      "cierreAliases": [
+        "1279 - Cri Cri"
+      ],
+      "allAliases": [
+        "1279 - Cri Cri"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1281",
+      "storeCode": "1281",
+      "canonicalLabel": "1281 - Sotuta",
+      "aperturaAliases": [
+        "1281 - Sotuta"
+      ],
+      "cierreAliases": [
+        "1281 - Sotuta"
+      ],
+      "allAliases": [
+        "1281 - Sotuta"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1282",
+      "storeCode": "1282",
+      "canonicalLabel": "1282 - Tizimin 6",
+      "aperturaAliases": [
+        "1282 - Tizimin 6"
+      ],
+      "cierreAliases": [
+        "1282 - Tizimin 6"
+      ],
+      "allAliases": [
+        "1282 - Tizimin 6"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1292",
+      "storeCode": "1292",
+      "canonicalLabel": "1292 - Cuzamar",
+      "aperturaAliases": [
+        "1292 - Cuzama"
+      ],
+      "cierreAliases": [
+        "1292 - Cuzamar"
+      ],
+      "allAliases": [
+        "1292 - Cuzama",
+        "1292 - Cuzamar"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1298",
+      "storeCode": "1298",
+      "canonicalLabel": "1298 - Muna 2",
+      "aperturaAliases": [
+        "1298 - Muna 2"
+      ],
+      "cierreAliases": [
+        "1298 - Muna 2"
+      ],
+      "allAliases": [
+        "1298 - Muna 2"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1305",
+      "storeCode": "1305",
+      "canonicalLabel": "1305 - Uman Piedra de Agua 3",
+      "aperturaAliases": [
+        "1305 - Uman Piedra de Agua 3"
+      ],
+      "cierreAliases": [
+        "1305 - Uman Piedra de Agua 3"
+      ],
+      "allAliases": [
+        "1305 - Uman Piedra de Agua 3"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1309",
+      "storeCode": "1309",
+      "canonicalLabel": "1309 - Telchac Puerto - Armado para ausencias",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "1309 - Telchac Puerto - Armado para ausencias"
+      ],
+      "allAliases": [
+        "1309 - Telchac Puerto - Armado para ausencias"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1310",
+      "storeCode": "1310",
+      "canonicalLabel": "1310 - Costera",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "1310 - Costera"
+      ],
+      "allAliases": [
+        "1310 - Costera"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "label:1318 chochola",
+      "storeCode": null,
+      "canonicalLabel": "1318 CHOCHOLA",
+      "aperturaAliases": [
+        "1318 CHOCHOLA"
+      ],
+      "cierreAliases": [
+        "1318 CHOCHOLA"
+      ],
+      "allAliases": [
+        "1318 CHOCHOLA"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1319",
+      "storeCode": "1319",
+      "canonicalLabel": "1319 - Macarena Petronila",
+      "aperturaAliases": [
+        "1319 - Macarena Petronila"
+      ],
+      "cierreAliases": [
+        "1319 - Macarena Petronila"
+      ],
+      "allAliases": [
+        "1319 - Macarena Petronila"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1320",
+      "storeCode": "1320",
+      "canonicalLabel": "1320 - Macarena Central de Abastos",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "1320 - Macarena Central de Abastos"
+      ],
+      "allAliases": [
+        "1320 - Macarena Central de Abastos"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:1321",
+      "storeCode": "1321",
+      "canonicalLabel": "1321 - Macarena Av. Quetzalcoatl",
+      "aperturaAliases": [
+        "1321 - Macarena Av. Quetzalcoatl"
+      ],
+      "cierreAliases": [
+        "1321 - Macarena Quetzcoatl"
+      ],
+      "allAliases": [
+        "1321 - Macarena Av. Quetzalcoatl",
+        "1321 - Macarena Quetzcoatl"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2001",
+      "storeCode": "2001",
+      "canonicalLabel": "2001 - Campeche 16",
+      "aperturaAliases": [
+        "2001 - Campeche 16"
+      ],
+      "cierreAliases": [
+        "2001 - Campeche 16"
+      ],
+      "allAliases": [
+        "2001 - Campeche 16"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2002",
+      "storeCode": "2002",
+      "canonicalLabel": "2002 - Campeche Mercado",
+      "aperturaAliases": [
+        "2002 - Campeche Mercado"
+      ],
+      "cierreAliases": [
+        "2002 - Campeche Mercado"
+      ],
+      "allAliases": [
+        "2002 - Campeche Mercado"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2003",
+      "storeCode": "2003",
+      "canonicalLabel": "2003 - Champotón",
+      "aperturaAliases": [
+        "2003 - Champotón"
+      ],
+      "cierreAliases": [
+        "2003 - Champotón"
+      ],
+      "allAliases": [
+        "2003 - Champotón"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2004",
+      "storeCode": "2004",
+      "canonicalLabel": "2004 - CAM Santa Ana",
+      "aperturaAliases": [
+        "2004 - CAM Santa Ana"
+      ],
+      "cierreAliases": [
+        "2004 - CAM Santa Ana"
+      ],
+      "allAliases": [
+        "2004 - CAM Santa Ana"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2006",
+      "storeCode": "2006",
+      "canonicalLabel": "2006 - Santa Lucia",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "2006 - Santa Lucia"
+      ],
+      "allAliases": [
+        "2006 - Santa Lucia"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2008",
+      "storeCode": "2008",
+      "canonicalLabel": "2008 - Escarsega",
+      "aperturaAliases": [
+        "2008 - Escarsega"
+      ],
+      "cierreAliases": [
+        "2008 - Escarsega"
+      ],
+      "allAliases": [
+        "2008 - Escarsega"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2010",
+      "storeCode": "2010",
+      "canonicalLabel": "2010 - Campeche Santa Lucía 2",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "2010 - Campeche Santa Lucía 2"
+      ],
+      "allAliases": [
+        "2010 - Campeche Santa Lucía 2"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2011",
+      "storeCode": "2011",
+      "canonicalLabel": "2011 - Hopelchen",
+      "aperturaAliases": [
+        "2011 - Hopelchen"
+      ],
+      "cierreAliases": [
+        "2011 - Hopelchen"
+      ],
+      "allAliases": [
+        "2011 - Hopelchen"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2012",
+      "storeCode": "2012",
+      "canonicalLabel": "2012 - Escarcega 2",
+      "aperturaAliases": [
+        "2012 - Escarcega 2"
+      ],
+      "cierreAliases": [
+        "2012 - Escarcega 2"
+      ],
+      "allAliases": [
+        "2012 - Escarcega 2"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2013",
+      "storeCode": "2013",
+      "canonicalLabel": "2013 - Seyba Playa",
+      "aperturaAliases": [
+        "2013 - Seyba Playa"
+      ],
+      "cierreAliases": [
+        "2013 - Seyba Playa"
+      ],
+      "allAliases": [
+        "2013 - Seyba Playa"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2014",
+      "storeCode": "2014",
+      "canonicalLabel": "2014 - Kala",
+      "aperturaAliases": [
+        "2014 - Kala"
+      ],
+      "cierreAliases": [
+        "2014 - Kala"
+      ],
+      "allAliases": [
+        "2014 - Kala"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2016",
+      "storeCode": "2016",
+      "canonicalLabel": "2016 - Carmen Tecolutla",
+      "aperturaAliases": [
+        "2016 - Carmen Tecolutla"
+      ],
+      "cierreAliases": [
+        "2016 - Carmen Tecolutla"
+      ],
+      "allAliases": [
+        "2016 - Carmen Tecolutla"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2017",
+      "storeCode": "2017",
+      "canonicalLabel": "2017 - Dzibalche",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "2017 - Dzibalche"
+      ],
+      "allAliases": [
+        "2017 - Dzibalche"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2018",
+      "storeCode": "2018",
+      "canonicalLabel": "2018 - Av. Central",
+      "aperturaAliases": [
+        "2018 - Av. Central"
+      ],
+      "cierreAliases": [
+        "2018 - Av. Central"
+      ],
+      "allAliases": [
+        "2018 - Av. Central"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2019",
+      "storeCode": "2019",
+      "canonicalLabel": "2019 - Champotón 2",
+      "aperturaAliases": [
+        "2019 - Champotón 2"
+      ],
+      "cierreAliases": [
+        "2019 - Champotón 2"
+      ],
+      "allAliases": [
+        "2019 - Champotón 2"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2020",
+      "storeCode": "2020",
+      "canonicalLabel": "2020 - Escarcega 3",
+      "aperturaAliases": [
+        "2020 - Escarcega 3"
+      ],
+      "cierreAliases": [
+        "2020 - Escarcega 3"
+      ],
+      "allAliases": [
+        "2020 - Escarcega 3"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2021",
+      "storeCode": "2021",
+      "canonicalLabel": "2021 - Campeche Candelaria",
+      "aperturaAliases": [
+        "2021 - Campeche Candelaria"
+      ],
+      "cierreAliases": [
+        "2021 - Campeche Candelaria"
+      ],
+      "allAliases": [
+        "2021 - Campeche Candelaria"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2023",
+      "storeCode": "2023",
+      "canonicalLabel": "2023 - Campeche Av. Lopez Mateos",
+      "aperturaAliases": [
+        "2023 - Campeche Av. Lopez Mateos"
+      ],
+      "cierreAliases": [
+        "2023 - Campeche Av. Lopez Mateos"
+      ],
+      "allAliases": [
+        "2023 - Campeche Av. Lopez Mateos"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2024",
+      "storeCode": "2024",
+      "canonicalLabel": "2024 - Cd. Carmen Mercado",
+      "aperturaAliases": [
+        "2024 - Cd. Carmen Mercado"
+      ],
+      "cierreAliases": [
+        "2024 - Cd. Carmen Mercado"
+      ],
+      "allAliases": [
+        "2024 - Cd. Carmen Mercado"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2026",
+      "storeCode": "2026",
+      "canonicalLabel": "2026 - Cd del Carmen Av. 10 de Julio",
+      "aperturaAliases": [
+        "2026 - Cd del Carmen Av. 10 de Julio"
+      ],
+      "cierreAliases": [
+        "2026 - Av. 10 de Julio"
+      ],
+      "allAliases": [
+        "2026 - Av. 10 de Julio",
+        "2026 - Cd del Carmen Av. 10 de Julio"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2027",
+      "storeCode": "2027",
+      "canonicalLabel": "2027 - Champotón 3",
+      "aperturaAliases": [
+        "2027 - Champotón 3"
+      ],
+      "cierreAliases": [
+        "2027 - Champotón 3"
+      ],
+      "allAliases": [
+        "2027 - Champotón 3"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2028",
+      "storeCode": "2028",
+      "canonicalLabel": "2028 - Campeche Samula",
+      "aperturaAliases": [
+        "2028 - Campeche Samula"
+      ],
+      "cierreAliases": [
+        "2028 - Campeche Samula"
+      ],
+      "allAliases": [
+        "2028 - Campeche Samula"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2029",
+      "storeCode": "2029",
+      "canonicalLabel": "2029 - Palma Real",
+      "aperturaAliases": [
+        "2029 - Palma Real"
+      ],
+      "cierreAliases": [
+        "2029 - Palma Real"
+      ],
+      "allAliases": [
+        "2029 - Palma Real"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2030",
+      "storeCode": "2030",
+      "canonicalLabel": "2030 - CAM San Antonio",
+      "aperturaAliases": [
+        "2030 - CAM San Antonio"
+      ],
+      "cierreAliases": [
+        "2030 - CAM San Antonio"
+      ],
+      "allAliases": [
+        "2030 - CAM San Antonio"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2031",
+      "storeCode": "2031",
+      "canonicalLabel": "2031 - Cd. Carmen Morelos",
+      "aperturaAliases": [
+        "2031 - Cd. Carmen Morelos"
+      ],
+      "cierreAliases": [
+        "2031 - Cd. Carmen Morelos"
+      ],
+      "allAliases": [
+        "2031 - Cd. Carmen Morelos"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2032",
+      "storeCode": "2032",
+      "canonicalLabel": "2032 - Hopelchen 2",
+      "aperturaAliases": [
+        "2032 - Hopelchen 2"
+      ],
+      "cierreAliases": [
+        "2032 - Hopelchen 2"
+      ],
+      "allAliases": [
+        "2032 - Hopelchen 2"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2033",
+      "storeCode": "2033",
+      "canonicalLabel": "2033 - Cd. Carmen Volcanes",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "2033 - Cd. Carmen Volcanes"
+      ],
+      "allAliases": [
+        "2033 - Cd. Carmen Volcanes"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2034",
+      "storeCode": "2034",
+      "canonicalLabel": "2034 - Calkini 2",
+      "aperturaAliases": [
+        "2034 - Calkini 2"
+      ],
+      "cierreAliases": [
+        "2034 - Calkini 2"
+      ],
+      "allAliases": [
+        "2034 - Calkini 2"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2035",
+      "storeCode": "2035",
+      "canonicalLabel": "2035 - Pomuch",
+      "aperturaAliases": [
+        "2035 - Pomuch"
+      ],
+      "cierreAliases": [
+        "2035 - Pomuch"
+      ],
+      "allAliases": [
+        "2035 - Pomuch"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2036",
+      "storeCode": "2036",
+      "canonicalLabel": "2036 - Champotón 4",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "2036 - Champotón 4"
+      ],
+      "allAliases": [
+        "2036 - Champotón 4"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2037",
+      "storeCode": "2037",
+      "canonicalLabel": "2037 - Tenabo",
+      "aperturaAliases": [
+        "2037 - Tenabo"
+      ],
+      "cierreAliases": [
+        "2037 - Tenabo"
+      ],
+      "allAliases": [
+        "2037 - Tenabo"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2038",
+      "storeCode": "2038",
+      "canonicalLabel": "2038 - Calkini Mercado",
+      "aperturaAliases": [
+        "2038 - Calkini Mercado"
+      ],
+      "cierreAliases": [
+        "2038 - Calkini Mercado"
+      ],
+      "allAliases": [
+        "2038 - Calkini Mercado"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2039",
+      "storeCode": "2039",
+      "canonicalLabel": "2039 - Xpujil",
+      "aperturaAliases": [
+        "2039 - Xpujil"
+      ],
+      "cierreAliases": [
+        "2039 - Xpujil"
+      ],
+      "allAliases": [
+        "2039 - Xpujil"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2040",
+      "storeCode": "2040",
+      "canonicalLabel": "2040 - Escarcega 4",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "2040 - Escarcega 4"
+      ],
+      "allAliases": [
+        "2040 - Escarcega 4"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2041",
+      "storeCode": "2041",
+      "canonicalLabel": "2041 - Sabancuy",
+      "aperturaAliases": [
+        "2041 - Sabancuy"
+      ],
+      "cierreAliases": [
+        "2041 - Sabancuy"
+      ],
+      "allAliases": [
+        "2041 - Sabancuy"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2042",
+      "storeCode": "2042",
+      "canonicalLabel": "2042 - Palizada",
+      "aperturaAliases": [
+        "2042 - Palizada"
+      ],
+      "cierreAliases": [
+        "2042 - Palizada"
+      ],
+      "allAliases": [
+        "2042 - Palizada"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2043",
+      "storeCode": "2043",
+      "canonicalLabel": "2043 - Nunkini",
+      "aperturaAliases": [
+        "2043 - Nunkini"
+      ],
+      "cierreAliases": [
+        "2043 - Nunkini"
+      ],
+      "allAliases": [
+        "2043 - Nunkini"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2044",
+      "storeCode": "2044",
+      "canonicalLabel": "2044 - Candelaria 2",
+      "aperturaAliases": [
+        "2044 - Candelaria 2"
+      ],
+      "cierreAliases": [
+        "2044 - Candelaria 2"
+      ],
+      "allAliases": [
+        "2044 - Candelaria 2"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2045",
+      "storeCode": "2045",
+      "canonicalLabel": "2045 - Champoton 5",
+      "aperturaAliases": [
+        "2045 - Champoton 5"
+      ],
+      "cierreAliases": [
+        "2045 - Champoton 5"
+      ],
+      "allAliases": [
+        "2045 - Champoton 5"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2046",
+      "storeCode": "2046",
+      "canonicalLabel": "2046 - El Polvorín",
+      "aperturaAliases": [
+        "2046 - El Polvorín"
+      ],
+      "cierreAliases": [
+        "2046 - El Polvorín"
+      ],
+      "allAliases": [
+        "2046 - El Polvorín"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2047",
+      "storeCode": "2047",
+      "canonicalLabel": "2047 - China",
+      "aperturaAliases": [
+        "2047 - China"
+      ],
+      "cierreAliases": [
+        "2047 - China"
+      ],
+      "allAliases": [
+        "2047 - China"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2048",
+      "storeCode": "2048",
+      "canonicalLabel": "2048 - Campeche Centro",
+      "aperturaAliases": [
+        "2048 - Campeche Centro"
+      ],
+      "cierreAliases": [
+        "2048 - Campeche Centro"
+      ],
+      "allAliases": [
+        "2048 - Campeche Centro"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2049",
+      "storeCode": "2049",
+      "canonicalLabel": "2049 - Becal",
+      "aperturaAliases": [
+        "2049 - Becal"
+      ],
+      "cierreAliases": [
+        "2049 - Becal"
+      ],
+      "allAliases": [
+        "2049 - Becal"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2051",
+      "storeCode": "2051",
+      "canonicalLabel": "2051 - Campeche Morelos",
+      "aperturaAliases": [
+        "2051 - Campeche Morelos"
+      ],
+      "cierreAliases": [
+        "2051 - Campeche Morelos"
+      ],
+      "allAliases": [
+        "2051 - Campeche Morelos"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2052",
+      "storeCode": "2052",
+      "canonicalLabel": "2052 - Campeche Granjas",
+      "aperturaAliases": [
+        "2052 - Campeche Granjas"
+      ],
+      "cierreAliases": [
+        "2052 - Campeche Granjas"
+      ],
+      "allAliases": [
+        "2052 - Campeche Granjas"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2053",
+      "storeCode": "2053",
+      "canonicalLabel": "2053 - Escarcega Morelos",
+      "aperturaAliases": [
+        "2053 - Escarcega Morelos"
+      ],
+      "cierreAliases": [
+        "2053 - Escarcega Morelos"
+      ],
+      "allAliases": [
+        "2053 - Escarcega Morelos"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2054",
+      "storeCode": "2054",
+      "canonicalLabel": "2054 - Plan Chac",
+      "aperturaAliases": [
+        "2054 - Plan Chac"
+      ],
+      "cierreAliases": [
+        "2054 - Plan Chac"
+      ],
+      "allAliases": [
+        "2054 - Plan Chac"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2055",
+      "storeCode": "2055",
+      "canonicalLabel": "2055 - Dzilbachen",
+      "aperturaAliases": [
+        "2055 - Dzilbachen"
+      ],
+      "cierreAliases": [
+        "2055 - Dzilbachen"
+      ],
+      "allAliases": [
+        "2055 - Dzilbachen"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2057",
+      "storeCode": "2057",
+      "canonicalLabel": "2057 - Presidentes",
+      "aperturaAliases": [
+        "2057 - Presidentes"
+      ],
+      "cierreAliases": [
+        "2057 - Presidentes"
+      ],
+      "allAliases": [
+        "2057 - Presidentes"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2059",
+      "storeCode": "2059",
+      "canonicalLabel": "2059 - Calkini 4",
+      "aperturaAliases": [
+        "2059 - Calkini 4"
+      ],
+      "cierreAliases": [
+        "2059 - Calkini 4"
+      ],
+      "allAliases": [
+        "2059 - Calkini 4"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2060",
+      "storeCode": "2060",
+      "canonicalLabel": "2060 - Calkini 5",
+      "aperturaAliases": [
+        "2060 - Calkini 5"
+      ],
+      "cierreAliases": [
+        "2060 - Calkini 5"
+      ],
+      "allAliases": [
+        "2060 - Calkini 5"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2061",
+      "storeCode": "2061",
+      "canonicalLabel": "2061 - Fidel Velazquez",
+      "aperturaAliases": [
+        "2061 - Fidel Velazquez"
+      ],
+      "cierreAliases": [
+        "2061 - Fidel Velazquez"
+      ],
+      "allAliases": [
+        "2061 - Fidel Velazquez"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2062",
+      "storeCode": "2062",
+      "canonicalLabel": "2062 - Kanisté",
+      "aperturaAliases": [
+        "2062 - Kanisté"
+      ],
+      "cierreAliases": [
+        "2062 - Kanisté"
+      ],
+      "allAliases": [
+        "2062 - Kanisté"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2063",
+      "storeCode": "2063",
+      "canonicalLabel": "2063 - Montecristo",
+      "aperturaAliases": [
+        "2063 - Montecristo"
+      ],
+      "cierreAliases": [
+        "2063 - Montecristo"
+      ],
+      "allAliases": [
+        "2063 - Montecristo"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2064",
+      "storeCode": "2064",
+      "canonicalLabel": "2064 - Tomas Aznar",
+      "aperturaAliases": [
+        "2064 - Tomas Aznar"
+      ],
+      "cierreAliases": [
+        "2064 - Tomas Aznar"
+      ],
+      "allAliases": [
+        "2064 - Tomas Aznar"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2065",
+      "storeCode": "2065",
+      "canonicalLabel": "2065 - Pomuch 2",
+      "aperturaAliases": [
+        "2065 - Pomuch 2"
+      ],
+      "cierreAliases": [
+        "2065 - Pomuch 2"
+      ],
+      "allAliases": [
+        "2065 - Pomuch 2"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2066",
+      "storeCode": "2066",
+      "canonicalLabel": "2066 - Isla Aguada",
+      "aperturaAliases": [
+        "2066 - Isla Aguada"
+      ],
+      "cierreAliases": [
+        "2066 - Isla Aguada"
+      ],
+      "allAliases": [
+        "2066 - Isla Aguada"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2067",
+      "storeCode": "2067",
+      "canonicalLabel": "2067 - Candelaria 3",
+      "aperturaAliases": [
+        "2067 - Candelaria 3"
+      ],
+      "cierreAliases": [
+        "2067 - Candelaria 3"
+      ],
+      "allAliases": [
+        "2067 - Candelaria 3"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2068",
+      "storeCode": "2068",
+      "canonicalLabel": "2068 - Bolonchen",
+      "aperturaAliases": [
+        "2068 - Bolonchen"
+      ],
+      "cierreAliases": [
+        "2068 - Bolonchen"
+      ],
+      "allAliases": [
+        "2068 - Bolonchen"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2069",
+      "storeCode": "2069",
+      "canonicalLabel": "2069 - Hopelchen 3",
+      "aperturaAliases": [
+        "2069 - Hopelchen 3"
+      ],
+      "cierreAliases": [
+        "2069 - Hopelchen 3"
+      ],
+      "allAliases": [
+        "2069 - Hopelchen 3"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2070",
+      "storeCode": "2070",
+      "canonicalLabel": "2070 - Minas(1)",
+      "aperturaAliases": [
+        "2070 - MINAS"
+      ],
+      "cierreAliases": [
+        "2070 - Minas(1)"
+      ],
+      "allAliases": [
+        "2070 - MINAS",
+        "2070 - Minas(1)"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2072",
+      "storeCode": "2072",
+      "canonicalLabel": "2072 - Xpujil 2",
+      "aperturaAliases": [
+        "2072 - Xpujil 2"
+      ],
+      "cierreAliases": [
+        "2072 - Xpujil 2"
+      ],
+      "allAliases": [
+        "2072 - Xpujil 2"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2074",
+      "storeCode": "2074",
+      "canonicalLabel": "2074 - Bellavista",
+      "aperturaAliases": [
+        "2074 - Bellavista"
+      ],
+      "cierreAliases": [
+        "2074 - Bellavista"
+      ],
+      "allAliases": [
+        "2074 - Bellavista"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2076",
+      "storeCode": "2076",
+      "canonicalLabel": "2076 - Ejido Carrillo Puerto",
+      "aperturaAliases": [
+        "2076 - Ejido Carrillo Puerto"
+      ],
+      "cierreAliases": [
+        "2076 - Ejido Carrillo Puerto"
+      ],
+      "allAliases": [
+        "2076 - Ejido Carrillo Puerto"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2077",
+      "storeCode": "2077",
+      "canonicalLabel": "2077 - Campeche Siglo XXI",
+      "aperturaAliases": [
+        "2077 - Campeche Siglo XXI"
+      ],
+      "cierreAliases": [
+        "2077 - Campeche Siglo XXI"
+      ],
+      "allAliases": [
+        "2077 - Campeche Siglo XXI"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2078",
+      "storeCode": "2078",
+      "canonicalLabel": "2078 - Escarcega 6",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "2078 - Escarcega 6"
+      ],
+      "allAliases": [
+        "2078 - Escarcega 6"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2079",
+      "storeCode": "2079",
+      "canonicalLabel": "2079 - Bonfil",
+      "aperturaAliases": [
+        "2079 - Bonfil"
+      ],
+      "cierreAliases": [
+        "2079 - Bonfil"
+      ],
+      "allAliases": [
+        "2079 - Bonfil"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2080",
+      "storeCode": "2080",
+      "canonicalLabel": "2080 - Ramon Espinola",
+      "aperturaAliases": [
+        "2080 - Ramon Espinola"
+      ],
+      "cierreAliases": [
+        "2080 - Ramon Espinola"
+      ],
+      "allAliases": [
+        "2080 - Ramon Espinola"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2081",
+      "storeCode": "2081",
+      "canonicalLabel": "2081 - Edzna",
+      "aperturaAliases": [
+        "2081 - Edzna"
+      ],
+      "cierreAliases": [
+        "2081 - Edzna"
+      ],
+      "allAliases": [
+        "2081 - Edzna"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2082",
+      "storeCode": "2082",
+      "canonicalLabel": "2082 - Av. Periferia",
+      "aperturaAliases": [
+        "2082 - Av. Periferia"
+      ],
+      "cierreAliases": [
+        "2082 - Av. Periferia"
+      ],
+      "allAliases": [
+        "2082 - Av. Periferia"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2084",
+      "storeCode": "2084",
+      "canonicalLabel": "2084 - Holpelchen 4",
+      "aperturaAliases": [
+        "2084 - Holpelchen 4"
+      ],
+      "cierreAliases": [
+        "2084 - Holpelchen 4"
+      ],
+      "allAliases": [
+        "2084 - Holpelchen 4"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2085",
+      "storeCode": "2085",
+      "canonicalLabel": "2085 - Escarcega 7",
+      "aperturaAliases": [
+        "2085 - Escarcega 7"
+      ],
+      "cierreAliases": [
+        "2085 - Escarcega 7"
+      ],
+      "allAliases": [
+        "2085 - Escarcega 7"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2086",
+      "storeCode": "2086",
+      "canonicalLabel": "2086 - Champoton 6",
+      "aperturaAliases": [
+        "2086 - Champoton 6"
+      ],
+      "cierreAliases": [
+        "2086 - Champoton 6"
+      ],
+      "allAliases": [
+        "2086 - Champoton 6"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2087",
+      "storeCode": "2087",
+      "canonicalLabel": "2087 - Champoton 7",
+      "aperturaAliases": [
+        "2087 - Champoton 7"
+      ],
+      "cierreAliases": [
+        "2087 - Champoton 7"
+      ],
+      "allAliases": [
+        "2087 - Champoton 7"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2088",
+      "storeCode": "2088",
+      "canonicalLabel": "2088 - Calkini 6",
+      "aperturaAliases": [
+        "2088 - Calkini 6"
+      ],
+      "cierreAliases": [
+        "2088 - Calkini 6"
+      ],
+      "allAliases": [
+        "2088 - Calkini 6"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2089",
+      "storeCode": "2089",
+      "canonicalLabel": "2089 - Escarcega 8",
+      "aperturaAliases": [
+        "2089 - Escarcega 8"
+      ],
+      "cierreAliases": [
+        "2089 - Escarcega 8"
+      ],
+      "allAliases": [
+        "2089 - Escarcega 8"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2090",
+      "storeCode": "2090",
+      "canonicalLabel": "2090 - Calkini 7",
+      "aperturaAliases": [
+        "2090 - Calkini 7"
+      ],
+      "cierreAliases": [
+        "2090 - Calkini 7"
+      ],
+      "allAliases": [
+        "2090 - Calkini 7"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2091",
+      "storeCode": "2091",
+      "canonicalLabel": "2091 - Hecelchakan 2",
+      "aperturaAliases": [
+        "2091 - Hecelchakan 2"
+      ],
+      "cierreAliases": [
+        "2091 - Hecelchakan 2"
+      ],
+      "allAliases": [
+        "2091 - Hecelchakan 2"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2092",
+      "storeCode": "2092",
+      "canonicalLabel": "2092 - Lerma",
+      "aperturaAliases": [
+        "2092 - Lerma"
+      ],
+      "cierreAliases": [
+        "2092 - Lerma"
+      ],
+      "allAliases": [
+        "2092 - Lerma"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2093",
+      "storeCode": "2093",
+      "canonicalLabel": "2093 - Tenabo 2",
+      "aperturaAliases": [
+        "2093 - Tenabo 2"
+      ],
+      "cierreAliases": [
+        "2093 - Tenabo 2"
+      ],
+      "allAliases": [
+        "2093 - Tenabo 2"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2095",
+      "storeCode": "2095",
+      "canonicalLabel": "2095 - Champoton 8",
+      "aperturaAliases": [
+        "2095 - Champoton 8"
+      ],
+      "cierreAliases": [
+        "2095 - Champoton 8"
+      ],
+      "allAliases": [
+        "2095 - Champoton 8"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:2096",
+      "storeCode": "2096",
+      "canonicalLabel": "2096 - Escarcega 10",
+      "aperturaAliases": [
+        "2096 - Escarcega 10"
+      ],
+      "cierreAliases": [
+        "2096 - Escarcega 10"
+      ],
+      "allAliases": [
+        "2096 - Escarcega 10"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3005",
+      "storeCode": "3005",
+      "canonicalLabel": "3005 - Cancun Niños Heroes",
+      "aperturaAliases": [
+        "3005 - Cancun Niños Heroes"
+      ],
+      "cierreAliases": [
+        "3005 - Cancun Niños Heroes"
+      ],
+      "allAliases": [
+        "3005 - Cancun Niños Heroes"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3008",
+      "storeCode": "3008",
+      "canonicalLabel": "3008 - Playa del Carmen 2",
+      "aperturaAliases": [
+        "3008 - Playa del Carmen 2"
+      ],
+      "cierreAliases": [
+        "3008 - Playa del Carmen 2"
+      ],
+      "allAliases": [
+        "3008 - Playa del Carmen 2"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3013",
+      "storeCode": "3013",
+      "canonicalLabel": "3013 - QROO Felipe Carrillo Puerto",
+      "aperturaAliases": [
+        "3013 - QROO Felipe Carrillo Puerto"
+      ],
+      "cierreAliases": [
+        "3013 - QROO Felipe Carrillo Puerto"
+      ],
+      "allAliases": [
+        "3013 - QROO Felipe Carrillo Puerto"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3017",
+      "storeCode": "3017",
+      "canonicalLabel": "3017 - Playa del Carmen 3",
+      "aperturaAliases": [
+        "3017 - Playa del Carmen 3"
+      ],
+      "cierreAliases": [
+        "3017 - Playa del Carmen 3"
+      ],
+      "allAliases": [
+        "3017 - Playa del Carmen 3"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3040",
+      "storeCode": "3040",
+      "canonicalLabel": "3040 - Kantunilkin",
+      "aperturaAliases": [
+        "3040 - Kantunilkin"
+      ],
+      "cierreAliases": [
+        "3040 - Kantunilkin"
+      ],
+      "allAliases": [
+        "3040 - Kantunilkin"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3051",
+      "storeCode": "3051",
+      "canonicalLabel": "3051 - QR Playa Av. 115",
+      "aperturaAliases": [
+        "3051 - QR Playa Av. 115"
+      ],
+      "cierreAliases": [
+        "3051 - QR Playa Av. 115"
+      ],
+      "allAliases": [
+        "3051 - QR Playa Av. 115"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3055",
+      "storeCode": "3055",
+      "canonicalLabel": "3055 - Isla Mujeres",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "3055 - Isla Mujeres"
+      ],
+      "allAliases": [
+        "3055 - Isla Mujeres"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3096",
+      "storeCode": "3096",
+      "canonicalLabel": "3096 - Tulum Pueblo 3",
+      "aperturaAliases": [
+        "3096 - Tulum Pueblo 3"
+      ],
+      "cierreAliases": [
+        "3096 - Tulum Pueblo 3"
+      ],
+      "allAliases": [
+        "3096 - Tulum Pueblo 3"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3102",
+      "storeCode": "3102",
+      "canonicalLabel": "3102 - Cancun Villas Otoch Paraiso 2",
+      "aperturaAliases": [
+        "3102 - Cancun Villas Otoch Paraiso 2"
+      ],
+      "cierreAliases": [
+        "3102 - Cancun Villas Otoch Paraiso 2"
+      ],
+      "allAliases": [
+        "3102 - Cancun Villas Otoch Paraiso 2"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3110",
+      "storeCode": "3110",
+      "canonicalLabel": "3110 - Holbox",
+      "aperturaAliases": [
+        "3110 - Holbox"
+      ],
+      "cierreAliases": [
+        "3110 - Holbox"
+      ],
+      "allAliases": [
+        "3110 - Holbox"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3111",
+      "storeCode": "3111",
+      "canonicalLabel": "3111 - Nva. Cozumel 1",
+      "aperturaAliases": [
+        "3111 - Nva. Cozumel 1"
+      ],
+      "cierreAliases": [
+        "3111 - NVA Cozumel"
+      ],
+      "allAliases": [
+        "3111 - NVA Cozumel",
+        "3111 - Nva. Cozumel 1"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3113",
+      "storeCode": "3113",
+      "canonicalLabel": "3113 - Playa Villas del Sol",
+      "aperturaAliases": [
+        "3113 - Playa Villas del Sol"
+      ],
+      "cierreAliases": [
+        "3113 - Playa Villas del Sol"
+      ],
+      "allAliases": [
+        "3113 - Playa Villas del Sol"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "label:3123 qroo felipe carrillo puerto 4",
+      "storeCode": null,
+      "canonicalLabel": "3123 QROO Felipe Carrillo Puerto 4",
+      "aperturaAliases": [
+        "3123 QROO Felipe Carrillo Puerto 4"
+      ],
+      "cierreAliases": [
+        "3123 QROO Felipe Carrillo Puerto 4"
+      ],
+      "allAliases": [
+        "3123 QROO Felipe Carrillo Puerto 4"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3124",
+      "storeCode": "3124",
+      "canonicalLabel": "3124 - Bacalar Mercado",
+      "aperturaAliases": [
+        "3124 - Bacalar Mercado"
+      ],
+      "cierreAliases": [
+        "3124 - Bacalar Mercado"
+      ],
+      "allAliases": [
+        "3124 - Bacalar Mercado"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3152",
+      "storeCode": "3152",
+      "canonicalLabel": "3152 - Kantunilkin 2",
+      "aperturaAliases": [
+        "3152 - Kantunilkin 2"
+      ],
+      "cierreAliases": [
+        "3152 - Kantunilkin 2"
+      ],
+      "allAliases": [
+        "3152 - Kantunilkin 2"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3165",
+      "storeCode": "3165",
+      "canonicalLabel": "3165 - Tulum Veleta",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "3165 - Tulum Veleta"
+      ],
+      "allAliases": [
+        "3165 - Tulum Veleta"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3167",
+      "storeCode": "3167",
+      "canonicalLabel": "3167 - Macarena Tulum",
+      "aperturaAliases": [
+        "3167 - Macarena Tulum"
+      ],
+      "cierreAliases": [
+        "3167 - Macarena Tulum"
+      ],
+      "allAliases": [
+        "3167 - Macarena Tulum"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3168",
+      "storeCode": "3168",
+      "canonicalLabel": "3168 - Macarena Chiquila",
+      "aperturaAliases": [
+        "3168 - Macarena Chiquila"
+      ],
+      "cierreAliases": [
+        "3168 - Macarena Chiquila"
+      ],
+      "allAliases": [
+        "3168 - Macarena Chiquila"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:3502",
+      "storeCode": "3502",
+      "canonicalLabel": "3502 - BB Bacalar",
+      "aperturaAliases": [
+        "3502 - BB Bacalar"
+      ],
+      "cierreAliases": [
+        "3502 - BB Bacalar"
+      ],
+      "allAliases": [
+        "3502 - BB Bacalar"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:5001",
+      "storeCode": "5001",
+      "canonicalLabel": "5001 - Tabasco Frontera 1",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "5001 - Tabasco Frontera 1"
+      ],
+      "allAliases": [
+        "5001 - Tabasco Frontera 1"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:5002",
+      "storeCode": "5002",
+      "canonicalLabel": "5002 - Tenosique Centro",
+      "aperturaAliases": [
+        "5002 - Tenosique Centro"
+      ],
+      "cierreAliases": [
+        "5002 - Tenosique Centro"
+      ],
+      "allAliases": [
+        "5002 - Tenosique Centro"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:5003",
+      "storeCode": "5003",
+      "canonicalLabel": "5003 - Emiliano Zapata",
+      "aperturaAliases": [
+        "5003 - Emiliano Zapata"
+      ],
+      "cierreAliases": [
+        "5003 - Emiliano Zapata"
+      ],
+      "allAliases": [
+        "5003 - Emiliano Zapata"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:5004",
+      "storeCode": "5004",
+      "canonicalLabel": "5004 - Tab. Balancan",
+      "aperturaAliases": [
+        "5004 - Tab. Balancan"
+      ],
+      "cierreAliases": [
+        "5004 - Tab. Balancan"
+      ],
+      "allAliases": [
+        "5004 - Tab. Balancan"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:5010",
+      "storeCode": "5010",
+      "canonicalLabel": "5010 - Ciudad Pemex",
+      "aperturaAliases": [
+        "5010 - Ciudad Pemex"
+      ],
+      "cierreAliases": [
+        "5010 - Ciudad Pemex"
+      ],
+      "allAliases": [
+        "5010 - Ciudad Pemex"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6001",
+      "storeCode": "6001",
+      "canonicalLabel": "6001 - Chiapas Palenque 1",
+      "aperturaAliases": [
+        "6001 - Chiapas Palenque 1"
+      ],
+      "cierreAliases": [
+        "6001 - Chiapas Palenque 1"
+      ],
+      "allAliases": [
+        "6001 - Chiapas Palenque 1"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6003",
+      "storeCode": "6003",
+      "canonicalLabel": "6003 - Chiapas Comitan 1",
+      "aperturaAliases": [
+        "6003 - Chiapas Comitan 1"
+      ],
+      "cierreAliases": [
+        "6003 - Comitan 1"
+      ],
+      "allAliases": [
+        "6003 - Chiapas Comitan 1",
+        "6003 - Comitan 1"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6004",
+      "storeCode": "6004",
+      "canonicalLabel": "6004 - Villaflores",
+      "aperturaAliases": [
+        "6004 - Villaflores"
+      ],
+      "cierreAliases": [
+        "6004 - Villaflores"
+      ],
+      "allAliases": [
+        "6004 - Villaflores"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6005",
+      "storeCode": "6005",
+      "canonicalLabel": "6005 - Chiapas Las Rosas",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "6005 - Chiapas Las Rosas"
+      ],
+      "allAliases": [
+        "6005 - Chiapas Las Rosas"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6006",
+      "storeCode": "6006",
+      "canonicalLabel": "6006 - Chiapas Comitan 2",
+      "aperturaAliases": [
+        "6006 - Chiapas Comitan 2"
+      ],
+      "cierreAliases": [
+        "6006 - Chiapas Comitan 2"
+      ],
+      "allAliases": [
+        "6006 - Chiapas Comitan 2"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6007",
+      "storeCode": "6007",
+      "canonicalLabel": "6007 - Chiapas Ocozocoautla",
+      "aperturaAliases": [
+        "6007 - Chiapas Ocozocoautla"
+      ],
+      "cierreAliases": [
+        "6007 - Chiapas Ocozocoautla"
+      ],
+      "allAliases": [
+        "6007 - Chiapas Ocozocoautla"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6008",
+      "storeCode": "6008",
+      "canonicalLabel": "6008 - Chiapas Teopisca",
+      "aperturaAliases": [
+        "6008 - Chiapas Teopisca"
+      ],
+      "cierreAliases": [
+        "6008 - Chiapas Teopisca"
+      ],
+      "allAliases": [
+        "6008 - Chiapas Teopisca"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6010",
+      "storeCode": "6010",
+      "canonicalLabel": "6010 - Comitan 3",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "6010 - Comitan 3"
+      ],
+      "allAliases": [
+        "6010 - Comitan 3"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6011",
+      "storeCode": "6011",
+      "canonicalLabel": "6011 - Venustiano Carranza",
+      "aperturaAliases": [
+        "6011 - Venustiano Carranza"
+      ],
+      "cierreAliases": [
+        "6011 - Venustiano Carranza"
+      ],
+      "allAliases": [
+        "6011 - Venustiano Carranza"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6012",
+      "storeCode": "6012",
+      "canonicalLabel": "6012 - San Cristobal",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "6012 - San Cristobal"
+      ],
+      "allAliases": [
+        "6012 - San Cristobal"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6014",
+      "storeCode": "6014",
+      "canonicalLabel": "6014 - Tuxtla Santa María",
+      "aperturaAliases": [
+        "6014 - Tuxtla Santa María"
+      ],
+      "cierreAliases": [
+        "6014 - Tuxtla Santa María"
+      ],
+      "allAliases": [
+        "6014 - Tuxtla Santa María"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6015",
+      "storeCode": "6015",
+      "canonicalLabel": "6015 - Tuxtla San José",
+      "aperturaAliases": [
+        "6015 - Tuxtla San José"
+      ],
+      "cierreAliases": [
+        "6015 - Tuxtla San José"
+      ],
+      "allAliases": [
+        "6015 - Tuxtla San José"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6016",
+      "storeCode": "6016",
+      "canonicalLabel": "6016 - Alcala",
+      "aperturaAliases": [
+        "6016 - Alcala"
+      ],
+      "cierreAliases": [
+        "6016 - Alcala"
+      ],
+      "allAliases": [
+        "6016 - Alcala"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6018",
+      "storeCode": "6018",
+      "canonicalLabel": "6018 - Las Margaritas",
+      "aperturaAliases": [],
+      "cierreAliases": [
+        "6018 - Las Margaritas"
+      ],
+      "allAliases": [
+        "6018 - Las Margaritas"
+      ],
+      "hasAperturas": false,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6019",
+      "storeCode": "6019",
+      "canonicalLabel": "6019 - Venustiano Carranza",
+      "aperturaAliases": [
+        "6019 - Venustiano Carranza"
+      ],
+      "cierreAliases": [
+        "6019 - Venustiano Carranza"
+      ],
+      "allAliases": [
+        "6019 - Venustiano Carranza"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6020",
+      "storeCode": "6020",
+      "canonicalLabel": "6020 - Colon",
+      "aperturaAliases": [
+        "6020 - Colon"
+      ],
+      "cierreAliases": [
+        "6020 - Colon"
+      ],
+      "allAliases": [
+        "6020 - Colon"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6021",
+      "storeCode": "6021",
+      "canonicalLabel": "6021 - Niño de Atocha",
+      "aperturaAliases": [
+        "6021 - Niño de Atocha"
+      ],
+      "cierreAliases": [
+        "6021 - Niño de Atocha"
+      ],
+      "allAliases": [
+        "6021 - Niño de Atocha"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6022",
+      "storeCode": "6022",
+      "canonicalLabel": "6022 - Bonampak",
+      "aperturaAliases": [
+        "6022 - Bonampak"
+      ],
+      "cierreAliases": [
+        "6022 - Bonampak"
+      ],
+      "allAliases": [
+        "6022 - Bonampak"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6024",
+      "storeCode": "6024",
+      "canonicalLabel": "6024 - Chiapas Catazaja",
+      "aperturaAliases": [
+        "6024 - Chiapas Catazaja"
+      ],
+      "cierreAliases": [
+        "6024 - Chiapas Catazaja"
+      ],
+      "allAliases": [
+        "6024 - Chiapas Catazaja"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6026",
+      "storeCode": "6026",
+      "canonicalLabel": "6026 - Tuxtla Patria Nueva",
+      "aperturaAliases": [
+        "6026 - Tuxtla Patria Nueva"
+      ],
+      "cierreAliases": [
+        "6026 - Tuxtla Patria Nueva"
+      ],
+      "allAliases": [
+        "6026 - Tuxtla Patria Nueva"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    },
+    {
+      "canonicalKey": "code:6028",
+      "storeCode": "6028",
+      "canonicalLabel": "6028 - Comitan Las Flores",
+      "aperturaAliases": [
+        "6028 - Comitan Las Flores"
+      ],
+      "cierreAliases": [
+        "6028 - Comitan Las Flores"
+      ],
+      "allAliases": [
+        "6028 - Comitan Las Flores"
+      ],
+      "hasAperturas": true,
+      "hasCierres": true
+    }
+  ]
+}

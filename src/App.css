@@ -13,23 +13,13 @@
   display: flex;
   gap: 24px;
   align-items: stretch;
+  justify-content: center;
   height: calc(100vh - 48px);
-  flex-wrap: wrap;
   overflow: hidden;
 }
 
-/* Left Content Section */
-.app-content {
-  flex: 1 1 720px;
-  min-width: 320px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  min-height: 0;
-}
-
 .assistant-column {
-  width: min(32vw, 420px);
+  width: min(100%, 720px);
   min-width: 280px;
   display: flex;
   height: calc(100vh - 48px);
@@ -105,82 +95,97 @@
   white-space: nowrap;
 }
 
+.report-download-panel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 52px 16px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(29, 78, 216, 0.14);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+.report-download-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.report-download-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #1d4ed8;
+}
+
+.report-download-title {
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.report-download-details {
+  color: #64748b;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.report-download-link {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: #15803d;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.report-download-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 999px;
+  background: #e2e8f0;
+  color: #334155;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.report-download-close:hover {
+  background: #cbd5e1;
+  color: #0f172a;
+}
+
 .assistant-panel {
   flex: 1 1 auto;
   height: 0;
   min-height: 0;
   display: flex;
   overflow: hidden;
-}
-
-/* Slide Card */
-.slide-card {
-  padding: 20px;
-  border-radius: 28px;
-  background: rgba(255, 255, 255, 0.9);
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  flex: 1 1 auto;
-  max-height: calc(100vh - 48px);
-  overflow: hidden;
-  box-shadow: 0 18px 60px rgba(15, 23, 42, 0.08);
-}
-
-/* Slide Header */
-.slide-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-/* Display Indicator */
-.display-indicator {
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: #dbeafe;
-  color: #1d4ed8;
-  font-weight: 700;
-}
-
-.screen-indicator {
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: #e2e8f0;
-  color: #334155;
-  font-weight: 700;
-  text-transform: capitalize;
-}
-
-/* Slide Image Container */
-.slide-image {
-  width: 100%;
-  flex: 1 1 auto;
-  min-height: 0;
-  height: 100%;
-  max-height: calc(100vh - 140px);
-  object-fit: contain;
-  display: block;
-  border-radius: 24px;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  background: #fff;
-}
-
-/* Empty State Placeholder */
-.slide-placeholder {
-  min-height: 320px;
-  display: grid;
-  place-items: center;
-  border-radius: 24px;
-  border: 1px dashed rgba(148, 163, 184, 0.5);
-  color: #64748b;
-  background: rgba(248, 250, 252, 0.9);
-  font-size: 22px;
-  font-weight: 600;
 }
 
 /* PresenterVideo Component */
@@ -419,6 +424,16 @@
     justify-content: space-between;
     width: 100%;
   }
+
+  .report-download-panel {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .report-download-link {
+    width: 100%;
+  }
+
 }
 
 /* Video Controls Bar */
@@ -746,10 +761,6 @@
 
   .assistant-tab {
     flex: 1 1 0;
-  }
-
-  .slide-card {
-    padding: 18px;
   }
 
   .confirm-modal-actions {

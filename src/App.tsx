@@ -1,25 +1,29 @@
 import { useConversation } from "@elevenlabs/react";
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
+import {
+  buildAperturasLookupResult,
+  getAperturasDateRangeLabel,
+} from "./aperturasKnowledgeBase";
+import { buildCierresLookupResult } from "./cierresKnowledgeBase";
+import {
+  createReportWorkbook,
+  type ReportWorkbookFile,
+  type ReportWorkbookInput,
+} from "./reportExcel";
 
-type Screen = "home" | "plans" | "checkout";
 type ToolDetails = Record<string, unknown>;
-
-type ToolEvent = {
-  source: "client" | "request" | "response";
-  toolName: string;
-  toolCallId: string;
-  toolType?: string;
-  parameters?: ToolDetails;
-  isError?: boolean;
-  isCalled?: boolean;
-};
 
 type ChatMessage = {
   id: string;
   role: "user" | "agent" | "system";
   text: string;
   isStreaming?: boolean;
+};
+
+type ReportDownload = Omit<ReportWorkbookFile, "blob"> & {
+  id: string;
+  url: string;
 };
 
 type AssistantTab = "voice" | "chat";
@@ -37,161 +41,9 @@ type AgentChatResponsePart = {
   event_id?: number;
 };
 
-enum DisplayOption {
-  Vitrina = "vitrinas",
-  Tienda = "tienda",
-  Totem = "totems",
-}
-
-type TopicKey =
-  | "demanda_fisica"
-  | "captura_flujo"
-  | "funnel_comercial"
-  | "espacio_layout"
-  | "inventario"
-  | "experiencia"
-  | "demografia"
-  | "credito"
-  | "ventas";
-
-type TopicDefinition = {
-  label: string;
-  summary: string;
-  imageSrc: string;
-  tags: string[];
-};
-
-type PresentationState = {
-  label: string;
-  summary: string;
-  imageSrc: string;
-  tags: string[];
-  topicKey: TopicKey | null;
-};
-
-const displayImages: Record<DisplayOption, string> = {
-  [DisplayOption.Vitrina]: "/slides/vitrina.png",
-  [DisplayOption.Tienda]: "/slides/tienda.png",
-  [DisplayOption.Totem]: "/slides/totem.png",
-};
-
-const TOPIC_CATALOG: Record<TopicKey, TopicDefinition> = {
-  demanda_fisica: {
-    label: "Demanda Fisica",
-    summary:
-      "Coco esta hablando del trafico real de la tienda, entradas, salidas y volumen de visitantes observados.",
-    imageSrc: "/slides/demanda_fisica.png",
-    tags: ["trafico", "entradas", "visitas", "footfall"],
-  },
-  captura_flujo: {
-    label: "Captura de Flujo",
-    summary:
-      "Coco esta explicando cuantas personas pasan frente a la tienda, cuantas entran y donde se pierde demanda.",
-    imageSrc: "/slides/captura_flujo.png",
-    tags: ["captura", "fachada", "no capturados", "conversion de paso"],
-  },
-  funnel_comercial: {
-    label: "Funnel Comercial",
-    summary:
-      "Coco esta conectando entradas, presolicitudes, completadas, convertidas y ventas dentro del embudo de tienda.",
-    imageSrc: "/slides/funnel_comercial.png",
-    tags: ["funnel", "conversion", "presolicitudes", "ventas"],
-  },
-  espacio_layout: {
-    label: "Espacio y Layout",
-    summary:
-      "Coco esta describiendo heatmaps, zonas calientes, zonas frias y la exploracion del cliente dentro de la tienda.",
-    imageSrc: "/slides/espacio_layout.png",
-    tags: ["heatmap", "layout", "zonas", "exploracion"],
-  },
-  inventario: {
-    label: "Inventario",
-    summary:
-      "Coco esta relacionando inventario libre, categorias, stock y productividad economica del espacio.",
-    imageSrc: "/slides/inventario.png",
-    tags: ["stock", "categorias", "productividad", "mix comercial"],
-  },
-  experiencia: {
-    label: "Experiencia Cliente",
-    summary:
-      "Coco esta describiendo espera, colas, friccion y calidad de la experiencia dentro del punto de venta.",
-    imageSrc: "/slides/experiencia.png",
-    tags: ["colas", "espera", "friccion", "journey"],
-  },
-  demografia: {
-    label: "Demografia",
-    summary:
-      "Coco esta explicando el perfil del cliente que entra a la tienda y su relacion con la oferta comercial.",
-    imageSrc: "/slides/demografia.png",
-    tags: ["perfil", "mujeres", "adultos", "segmentacion"],
-  },
-  credito: {
-    label: "Credito",
-    summary:
-      "Coco esta hablando del proceso financiero, aprobacion, conversion crediticia y salud del funnel.",
-    imageSrc: "/slides/credito.png",
-    tags: ["credito", "aprobacion", "intencion", "formalizacion"],
-  },
-  ventas: {
-    label: "Ventas y Monetizacion",
-    summary:
-      "Coco esta enfocando la explicacion en venta neta, ticket, categorias lideres e ingreso por visitante.",
-    imageSrc: "/slides/ventas.png",
-    tags: ["venta neta", "ticket", "monetizacion", "ingreso por visitante"],
-  },
-};
-
-const TOPIC_ALIASES: Record<string, TopicKey> = {
-  demanda: "demanda_fisica",
-  demanda_fisica: "demanda_fisica",
-  demanda_real: "demanda_fisica",
-  trafico: "demanda_fisica",
-  trafico_real: "demanda_fisica",
-  flujo: "captura_flujo",
-  captura: "captura_flujo",
-  captura_de_flujo: "captura_flujo",
-  captura_flujo: "captura_flujo",
-  fachada: "captura_flujo",
-  no_captura: "captura_flujo",
-  embudo: "funnel_comercial",
-  funnel: "funnel_comercial",
-  funnel_comercial: "funnel_comercial",
-  conversion: "funnel_comercial",
-  layout: "espacio_layout",
-  espacio: "espacio_layout",
-  heatmap: "espacio_layout",
-  heatmaps: "espacio_layout",
-  espacio_layout: "espacio_layout",
-  tienda: "espacio_layout",
-  inventario: "inventario",
-  stock: "inventario",
-  experiencia: "experiencia",
-  experiencia_cliente: "experiencia",
-  colas: "experiencia",
-  espera: "experiencia",
-  demografia: "demografia",
-  perfil: "demografia",
-  cliente: "demografia",
-  credito: "credito",
-  financiero: "credito",
-  ventas: "ventas",
-  monetizacion: "ventas",
-  venta: "ventas",
-  comercial: "ventas",
-};
-
 const ELEVENLABS_AGENT_ID = import.meta.env.VITE_ELEVENLABS_AGENT_ID;
-const DEFAULT_VIEW_IMAGE = "/macropay-default.png";
-const STREAMING_PLACEHOLDER_TEXT = "Coco está respondiendo...";
-const DEFAULT_PRESENTATION: PresentationState = {
-  label: "Análisis de tema...",
-  summary:
-    "Cuando Coco use la herramienta, aqui mostraremos la imagen, el tema detectado y un resumen corto para acompanar la explicacion.",
-  imageSrc: DEFAULT_VIEW_IMAGE,
-  tags: ["tema", "imagen", "elevenlabs"],
-  topicKey: null,
-};
-
+const APERTURAS_DATE_RANGE_LABEL = getAperturasDateRangeLabel();
+const STREAMING_PLACEHOLDER_TEXT = "Teseo está respondiendo...";
 function normalizeText(value: string) {
   return value
     .normalize("NFD")
@@ -203,6 +55,47 @@ function normalizeText(value: string) {
 
 function getStringValue(value: unknown) {
   return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
+function getNumberValue(value: unknown) {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function getDateFilterValues(parameters?: ToolDetails) {
+  const range =
+    getStringValue(parameters?.rango) ??
+    getStringValue(parameters?.fecha) ??
+    getStringValue(parameters?.periodo) ??
+    getStringValue(parameters?.rango_fechas) ??
+    getStringValue(parameters?.rango_fecha) ??
+    getStringValue(parameters?.date_range) ??
+    getStringValue(parameters?.dateRange);
+  const fromDate =
+    getStringValue(parameters?.desde) ??
+    getStringValue(parameters?.fecha_inicio) ??
+    getStringValue(parameters?.inicio) ??
+    getStringValue(parameters?.from) ??
+    getStringValue(parameters?.start_date) ??
+    getStringValue(parameters?.startDate);
+  const toDate =
+    getStringValue(parameters?.hasta) ??
+    getStringValue(parameters?.fecha_fin) ??
+    getStringValue(parameters?.fin) ??
+    getStringValue(parameters?.to) ??
+    getStringValue(parameters?.end_date) ??
+    getStringValue(parameters?.endDate);
+
+  return { range, fromDate, toDate };
+}
+
+function mergeToolParameters(
+  parameters: ToolDetails | undefined,
+  overrides: ToolDetails,
+) {
+  return {
+    ...(parameters ?? {}),
+    ...overrides,
+  };
 }
 
 function findLastStreamingMessageIndex(messages: ChatMessage[]) {
@@ -219,114 +112,80 @@ function getLastMessage(messages: ChatMessage[]) {
   return messages.length > 0 ? messages[messages.length - 1] : undefined;
 }
 
-function getDisplayOptionFromValue(value: unknown) {
-  if (typeof value !== "string") {
-    return null;
-  }
-
+function isReportToolName(value: string) {
   const normalizedValue = normalizeText(value);
 
-  if (normalizedValue === DisplayOption.Vitrina) {
-    return DisplayOption.Vitrina;
-  }
-
-  if (normalizedValue === DisplayOption.Tienda) {
-    return DisplayOption.Tienda;
-  }
-
-  if (normalizedValue === DisplayOption.Totem) {
-    return DisplayOption.Totem;
-  }
-
-  return null;
+  return (
+    normalizedValue === "reporte" ||
+    normalizedValue === "report" ||
+    normalizedValue === "generar_reporte" ||
+    normalizedValue === "reporte_open_close" ||
+    normalizedValue === "generar_excel_open_close" ||
+    normalizedValue === "reporte_top" ||
+    normalizedValue === "generar_excel_top" ||
+    normalizedValue === "reporte_aperturas" ||
+    normalizedValue === "generar_excel_aperturas" ||
+    normalizedValue === "reporte_cierres" ||
+    normalizedValue === "generar_excel_cierres"
+  );
 }
 
-function getValueFromParameters(
-  parameters: ToolDetails | undefined,
-  keys: string[],
-) {
-  if (!parameters) {
-    return null;
-  }
+function getReportInputFromParameters(
+  parameters?: ToolDetails,
+): ReportWorkbookInput {
+  const dateFilters = getDateFilterValues(parameters);
+  const rango =
+    dateFilters.range ??
+    (dateFilters.fromDate || dateFilters.toDate ? null : APERTURAS_DATE_RANGE_LABEL);
+  const categoria = getStringValue(parameters?.categoria) ?? "open-close";
+  const sucursal =
+    getStringValue(parameters?.sucursal) ??
+    getStringValue(parameters?.tienda) ??
+    getStringValue(parameters?.nombre);
+  const desde = dateFilters.fromDate;
+  const hasta = dateFilters.toDate;
 
-  for (const key of keys) {
-    const value = getStringValue(parameters[key]);
-
-    if (value) {
-      return value;
-    }
-  }
-
-  return null;
+  return { rango, categoria, sucursal, desde, hasta };
 }
 
-function getDisplayOptionFromParameters(parameters?: ToolDetails) {
-  const value = getValueFromParameters(parameters, [
-    "dispositiva",
-    "diapositiva",
-    "opcion",
-    "option",
-    "tipo",
-    "view",
-  ]);
-
-  return value ? getDisplayOptionFromValue(value) : null;
-}
-
-function getTopicKeyFromValue(value: unknown) {
-  if (typeof value !== "string") {
-    return null;
-  }
-
+function isAperturasLookupToolName(value: string) {
   const normalizedValue = normalizeText(value);
-  return TOPIC_ALIASES[normalizedValue] ?? null;
+
+  return (
+    normalizedValue === "consultar_aperturas" ||
+    normalizedValue === "consulta_aperturas" ||
+    normalizedValue === "resumen_aperturas" ||
+    normalizedValue === "aperturas"
+  );
 }
 
-function getTopicKeyFromParameters(parameters?: ToolDetails) {
-  const value = getValueFromParameters(parameters, [
-    "tema",
-    "topic",
-    "categoria",
-    "asunto",
-    "dimension",
-    "insight",
-    "seccion",
-  ]);
+function isCierresLookupToolName(value: string) {
+  const normalizedValue = normalizeText(value);
 
-  return value ? getTopicKeyFromValue(value) : null;
+  return (
+    normalizedValue === "consultar_cierres" ||
+    normalizedValue === "consulta_cierres" ||
+    normalizedValue === "resumen_cierres" ||
+    normalizedValue === "cierres"
+  );
 }
 
-function buildPresentation(parameters?: ToolDetails) {
-  const topicKey = getTopicKeyFromParameters(parameters);
-  const displayOption = getDisplayOptionFromParameters(parameters);
+function getAperturasLookupInputFromParameters(parameters?: ToolDetails) {
+  const parsedLimit =
+    getNumberValue(parameters?.limite) ??
+    Number(getStringValue(parameters?.limite) ?? Number.NaN);
+  const dateFilters = getDateFilterValues(parameters);
 
-  if (topicKey) {
-    const topic = TOPIC_CATALOG[topicKey];
-
-    return {
-      label: topic.label,
-      summary: topic.summary,
-      imageSrc: topic.imageSrc,
-      tags: topic.tags,
-      topicKey,
-    } satisfies PresentationState;
-  }
-
-  if (displayOption) {
-    const label =
-      displayOption.charAt(0).toUpperCase() + displayOption.slice(1);
-
-    return {
-      label,
-      summary:
-        "Coco solicito mostrar una vista puntual de apoyo para su explicacion.",
-      imageSrc: displayImages[displayOption],
-      tags: ["visual", "soporte", displayOption],
-      topicKey: null,
-    } satisfies PresentationState;
-  }
-
-  return null;
+  return {
+    range: dateFilters.range,
+    fromDate: dateFilters.fromDate,
+    toDate: dateFilters.toDate,
+    storeQuery:
+      getStringValue(parameters?.sucursal) ??
+      getStringValue(parameters?.tienda) ??
+      getStringValue(parameters?.nombre),
+    limit: Number.isFinite(parsedLimit) ? parsedLimit : null,
+  };
 }
 
 function PresenterVideo(props: {
@@ -364,8 +223,8 @@ function PresenterVideo(props: {
         <div className="disconnect-screen">
           {contactImageVisible ? (
             <img
-              src="/coco-contact.png"
-              alt="Coco"
+              src="/teseo-contact.png"
+              alt="Teseo"
               onError={() => setContactImageVisible(false)}
               className="contact-image"
             />
@@ -384,15 +243,15 @@ function PresenterVideo(props: {
             </div>
           )}
           <div className="contact-info">
-            <div className="contact-name">Coco</div>
+            <div className="contact-name">Teseo</div>
             <div className="contact-description">
               Contacto virtual disponible para iniciar llamada
             </div>
             <button
               onClick={onStart}
               className="call-btn"
-              aria-label="Llamar a Coco"
-              title="Llamar a Coco"
+              aria-label="Llamar a Teseo"
+              title="Llamar a Teseo"
             >
               <span>☎</span>
               <span>Llamar</span>
@@ -402,17 +261,17 @@ function PresenterVideo(props: {
       ) : isConnecting ? (
         <div className="connecting-state" role="status" aria-live="polite">
           <img
-            src="/coco-connecting.png"
-            alt="Conectando con Coco"
+            src="/teseo-connecting.png"
+            alt="Conectando con Teseo"
             className="connecting-image"
           />
           <div className="connecting-overlay">
             <span className="connecting-loader" aria-hidden="true" />
-            <span className="connecting-text">Conectando con Coco</span>
+            <span className="connecting-text">Conectando con Teseo</span>
           </div>
         </div>
       ) : (
-        <img src="/coco-live.jpeg" alt="Coco" className="live-avatar-image" />
+        <img src="/teseo-live.jpeg" alt="Teseo" className="live-avatar-image" />
       )}
     </div>
   );
@@ -456,7 +315,7 @@ function ChatPanel(props: {
             {isConnected
               ? "Esta es una conversacion independiente y se mantiene activa."
               : isConnecting
-                ? "Conectando el chat con Coco..."
+                ? "Conectando el chat con Teseo..."
                 : "Abre esta pestaña para iniciar una conversacion de chat aparte."}
           </div>
         </div>
@@ -494,7 +353,7 @@ function ChatPanel(props: {
               onSend();
             }
           }}
-          placeholder="Escribe un mensaje para Coco"
+          placeholder="Escribe un mensaje para Teseo..."
           className="chat-input"
           rows={3}
           disabled={!isConnected}
@@ -511,12 +370,45 @@ function ChatPanel(props: {
   );
 }
 
+function ReportDownloadPanel({
+  report,
+  onDismiss,
+}: {
+  report: ReportDownload;
+  onDismiss: () => void;
+}) {
+  return (
+    <div className="report-download-panel" aria-live="polite">
+      <div className="report-download-meta">
+        <span className="report-download-label">Reporte listo</span>
+        <span className="report-download-title">{report.title}</span>
+        <span className="report-download-details">
+          {report.category} | {report.range}
+        </span>
+      </div>
+      <a
+        className="report-download-link"
+        href={report.url}
+        download={report.filename}
+      >
+        Descargar Excel
+      </a>
+      <button
+        type="button"
+        className="report-download-close"
+        onClick={onDismiss}
+        aria-label="Quitar reporte"
+        title="Quitar reporte"
+      >
+        ×
+      </button>
+    </div>
+  );
+}
+
 export default function App() {
-  const [screen, setScreen] = useState<Screen>("home");
   const [voiceStatus, setVoiceStatus] = useState("disconnected");
   const [chatStatus, setChatStatus] = useState("disconnected");
-  const [presentation, setPresentation] =
-    useState<PresentationState>(DEFAULT_PRESENTATION);
   const [activeTab, setActiveTab] = useState<AssistantTab>("voice");
   const [showVoiceEndDialog, setShowVoiceEndDialog] = useState(false);
   const [chatDraft, setChatDraft] = useState("");
@@ -524,43 +416,80 @@ export default function App() {
     {
       id: crypto.randomUUID(),
       role: "system",
-      text: "El chat y la llamada funcionan como conversaciones separadas.",
+      text: "Las bases de aperturas y cierres estan cargadas. Puedes consultar cualquiera y generar su Excel filtrado.",
     },
   ]);
-  const dateRangeTag = "01-03-2026 a 29-03-2026";
+  const [reportDownload, setReportDownload] = useState<ReportDownload | null>(
+    null,
+  );
+  const dateRangeTag = reportDownload?.range ?? APERTURAS_DATE_RANGE_LABEL;
 
-  const trackToolEvent = (
-    source: ToolEvent["source"],
-    toolName: string,
-    toolCallId: string,
-    extra?: Partial<ToolEvent>,
-  ) => {
-    const event: ToolEvent = {
-      source,
-      toolName,
-      toolCallId,
-      ...extra,
+  useEffect(() => {
+    return () => {
+      if (reportDownload) {
+        URL.revokeObjectURL(reportDownload.url);
+      }
     };
-
-    const nextPresentation = buildPresentation(event.parameters);
-
-    if (nextPresentation) {
-      setPresentation(nextPresentation);
-      return true;
-    }
-
-    return false;
-  };
-
-  const handlePresentationTool = async (parameters: ToolDetails) => {
-    trackToolEvent("client", "mostrarTema", crypto.randomUUID(), {
-      parameters,
-    });
-    return "tema actualizado";
-  };
+  }, [reportDownload]);
 
   const appendChatMessage = (message: ChatMessage) => {
     setMessages((current) => [...current, message]);
+  };
+
+  const clearReportDownload = () => {
+    setReportDownload((current) => {
+      if (current) {
+        URL.revokeObjectURL(current.url);
+      }
+
+      return null;
+    });
+  };
+
+  const handleReportTool = async (parameters: ToolDetails = {}) => {
+    const reportFile = createReportWorkbook(
+      getReportInputFromParameters(parameters),
+    );
+    const nextReport: ReportDownload = {
+      id: crypto.randomUUID(),
+      filename: reportFile.filename,
+      title: reportFile.title,
+      range: reportFile.range,
+      category: reportFile.category,
+      generatedAt: reportFile.generatedAt,
+      url: URL.createObjectURL(reportFile.blob),
+    };
+
+    setReportDownload((current) => {
+      if (current) {
+        URL.revokeObjectURL(current.url);
+      }
+
+      return nextReport;
+    });
+    appendChatMessage({
+      id: crypto.randomUUID(),
+      role: "system",
+      text: `Reporte Excel generado: ${nextReport.category} (${nextReport.range}).`,
+    });
+
+    return JSON.stringify({
+      status: "ok",
+      filename: nextReport.filename,
+      message: "Reporte Excel generado y disponible para descarga en la UI.",
+    });
+  };
+
+  const handleAperturasLookup = async (parameters: ToolDetails = {}) => {
+    return JSON.stringify(
+      buildAperturasLookupResult(getAperturasLookupInputFromParameters(parameters)),
+    );
+  };
+
+  const handleCierresLookup = async (parameters: ToolDetails = {}) => {
+    return JSON.stringify(
+      buildCierresLookupResult(getAperturasLookupInputFromParameters(parameters)),
+    );
   };
 
   const ensureStreamingAgentPlaceholder = () => {
@@ -705,44 +634,51 @@ export default function App() {
 
   const sharedConversationConfig = {
     clientTools: {
-      setScreen: async ({ screen }: { screen: Screen }) => {
-        setScreen(screen);
-        return "ok";
-      },
-      diapositivas: handlePresentationTool,
-      mostrarTema: handlePresentationTool,
-      mostrarImagenTema: handlePresentationTool,
+      reporte: handleReportTool,
+      reporte_open_close: (parameters: ToolDetails = {}) =>
+        handleReportTool(
+          mergeToolParameters(parameters, { categoria: "open-close" }),
+        ),
+      reporte_top: (parameters: ToolDetails = {}) =>
+        handleReportTool(mergeToolParameters(parameters, { categoria: "top" })),
+      reporte_aperturas: (parameters: ToolDetails = {}) =>
+        handleReportTool(mergeToolParameters(parameters, { categoria: "open" })),
+      reporte_cierres: (parameters: ToolDetails = {}) =>
+        handleReportTool(mergeToolParameters(parameters, { categoria: "close" })),
+      consultar_aperturas: handleAperturasLookup,
+      resumen_aperturas: handleAperturasLookup,
+      consultar_cierres: handleCierresLookup,
+      resumen_cierres: handleCierresLookup,
     },
     onUnhandledClientToolCall: (tool: {
       tool_name: string;
       tool_call_id: string;
       parameters?: ToolDetails;
     }) => {
-      trackToolEvent("client", tool.tool_name, tool.tool_call_id, {
-        parameters: tool.parameters,
-      });
-    },
-    onAgentToolRequest: (tool: {
-      tool_name: string;
-      tool_call_id: string;
-      tool_type: string;
-    }) => {
-      trackToolEvent("request", tool.tool_name, tool.tool_call_id, {
-        toolType: tool.tool_type,
-      });
-    },
-    onAgentToolResponse: (tool: {
-      tool_name: string;
-      tool_call_id: string;
-      tool_type: string;
-      is_error: boolean;
-      is_called: boolean;
-    }) => {
-      trackToolEvent("response", tool.tool_name, tool.tool_call_id, {
-        toolType: tool.tool_type,
-        isError: tool.is_error,
-        isCalled: tool.is_called,
-      });
+      if (isReportToolName(tool.tool_name)) {
+        const categoryOverride = isCierresLookupToolName(tool.tool_name)
+          ? { categoria: "close" }
+          : isAperturasLookupToolName(tool.tool_name)
+            ? { categoria: "open" }
+            : normalizeText(tool.tool_name).includes("top")
+              ? { categoria: "top" }
+            : normalizeText(tool.tool_name).includes("cierre")
+              ? { categoria: "close" }
+              : {};
+        void handleReportTool(
+          mergeToolParameters(tool.parameters, categoryOverride),
+        );
+        return;
+      }
+
+      if (isAperturasLookupToolName(tool.tool_name)) {
+        void handleAperturasLookup(tool.parameters ?? {});
+        return;
+      }
+
+      if (isCierresLookupToolName(tool.tool_name)) {
+        void handleCierresLookup(tool.parameters ?? {});
+      }
     },
   };
 
@@ -807,7 +743,7 @@ export default function App() {
         {
           id: crypto.randomUUID(),
           role: "system",
-          text: "No se pudo continuar el chat con Coco. Intenta abrir la pestaña otra vez.",
+          text: "No se pudo continuar el chat con Teseo. Intenta abrir la pestaña otra vez.",
         },
       ]);
     },
@@ -925,30 +861,13 @@ export default function App() {
   return (
     <div className="app">
       <div className="app-layout">
-        <div className="app-content">
-          <div className="slide-card">
-            <div className="slide-header">
-              <span className="display-indicator">{presentation.label}</span>
-              {screen !== "home" ? (
-                <span className="screen-indicator">{screen}</span>
-              ) : null}
-            </div>
-
-            <img
-              src={presentation.imageSrc}
-              alt={presentation.label}
-              className="slide-image"
-            />
-          </div>
-        </div>
-
         <div className="assistant-column">
           <div className="assistant-shell">
             <div className="assistant-topbar">
               <div
                 className="assistant-tabs"
                 role="tablist"
-                aria-label="Canal de Coco"
+                aria-label="Canal de Teseo"
               >
                 <button
                   type="button"
@@ -974,6 +893,13 @@ export default function App() {
                 <span className="date-range-value">{dateRangeTag}</span>
               </div>
             </div>
+
+            {reportDownload ? (
+              <ReportDownloadPanel
+                report={reportDownload}
+                onDismiss={clearReportDownload}
+              />
+            ) : null}
 
             <div className="assistant-panel">
               {activeTab === "voice" ? (
