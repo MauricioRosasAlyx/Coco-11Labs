@@ -1,4 +1,5 @@
 import rawData from "./data/sucursalesMap.json";
+import { extractStoreCode, sanitizeStoreName } from "./storeName";
 
 type RawRecord = {
   storeCode: string | null;
@@ -29,15 +30,16 @@ export function resolveCanonicalStore(record: RawRecord) {
     return {
       canonicalKey: entry.canonicalKey,
       storeCode: entry.storeCode,
-      canonicalLabel: entry.canonicalLabel,
+      canonicalLabel: sanitizeStoreName(entry.canonicalLabel),
       aliases: entry.allAliases,
     };
   }
 
   return {
     canonicalKey: buildCanonicalKey(record.storeCode, record.storeLabel),
-    storeCode: record.storeCode,
-    canonicalLabel: record.storeLabel,
+    storeCode:
+      record.storeCode ?? extractStoreCode(record.storeLabel)?.toString() ?? null,
+    canonicalLabel: sanitizeStoreName(record.storeLabel),
     aliases: [record.storeLabel],
   };
 }
@@ -74,7 +76,10 @@ function findEntryForRecord(record: RawRecord) {
 }
 
 function buildCanonicalKey(storeCode: string | null, storeLabel: string) {
-  return storeCode ? `code:${storeCode}` : `label:${normalizeKey(storeLabel)}`;
+  const resolvedCode = storeCode ?? extractStoreCode(storeLabel)?.toString() ?? null;
+  return resolvedCode
+    ? `code:${resolvedCode}`
+    : `label:${normalizeKey(storeLabel)}`;
 }
 
 function normalizeKey(value: string) {

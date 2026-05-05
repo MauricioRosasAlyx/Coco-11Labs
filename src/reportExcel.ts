@@ -1,22 +1,3 @@
-import {
-  findAperturas,
-  getDiscardedEventsForRecords,
-  type CleanAperturaRecord,
-  type DiscardedAperturaEvent,
-} from "./aperturasKnowledgeBase";
-import {
-  findCierres,
-  getDiscardedCierreEventsForRecords,
-  type CleanCierreRecord,
-  type DiscardedCierreEvent,
-} from "./cierresKnowledgeBase";
-import {
-  listSucursalMapEntries,
-  matchesSucursalQuery,
-  resolveCanonicalStore,
-  type SucursalMapEntry,
-} from "./sucursalesMap";
-
 export type ReportWorkbookInput = {
   rango?: string | null;
   categoria?: string | null;
@@ -35,6 +16,13 @@ export type ReportWorkbookFile = {
   generatedAt: string;
 };
 
+export type ReportWorkbookData = {
+  rows?: unknown[];
+  summary?: {
+    dateRange?: string | null;
+  } | null;
+};
+
 type CellValue = string | number | null;
 
 type Cell = {
@@ -46,55 +34,23 @@ type SheetRow = Array<CellValue | Cell>;
 
 type DatasetKind = "open-close" | "aperturas" | "cierres" | "top";
 
-type DateQuery = {
-  range?: string | null;
-  fromDate?: string | null;
-  toDate?: string | null;
-  storeQuery?: string | null;
-};
-
-type MappedAperturaRecord = CleanAperturaRecord & {
-  canonicalKey: string;
-  canonicalLabel: string;
-};
-
-type MappedCierreRecord = CleanCierreRecord & {
-  canonicalKey: string;
-  canonicalLabel: string;
-};
-
-type MappedDiscardedAperturaEvent = DiscardedAperturaEvent & {
-  canonicalKey: string;
-  canonicalLabel: string;
-};
-
-type MappedDiscardedCierreEvent = DiscardedCierreEvent & {
-  canonicalKey: string;
-  canonicalLabel: string;
-};
-
-type CombinedRecord = {
+type EventRow = {
   date: string;
-  canonicalKey: string;
-  storeCode: string | null;
+  storeLabel: string;
+  eventTime: string;
+};
+
+type OpenCloseRow = {
+  date: string;
   storeLabel: string;
   openingTime: string | null;
   closingTime: string | null;
   opensOnTime: boolean | null;
   closesOnTime: boolean | null;
-  openingRawEventCount: number;
-  closingRawEventCount: number;
-  openingDiscardedCount: number;
-  closingDiscardedCount: number;
-  openingSourceRowNumber: number | null;
-  closingSourceRowNumber: number | null;
-  status: string;
-  complianceStatus: string;
-  notes: string;
+  complianceStatus?: string;
 };
 
-type TopStoreMetric = {
-  canonicalKey: string;
+type TopRow = {
   storeLabel: string;
   evaluatedCount: number;
   compliantCount: number;
@@ -104,949 +60,104 @@ type TopStoreMetric = {
 
 const MIME_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-const OPEN_ON_TIME_THRESHOLD = "07:00:00";
-const CLOSE_ON_TIME_THRESHOLD = "22:00:00";
-const DEFAULT_REPORT_YEAR = 2026;
-const MONTHS: Record<string, number> = {
-  enero: 0,
-  febrero: 1,
-  marzo: 2,
-  abril: 3,
-  mayo: 4,
-  junio: 5,
-  julio: 6,
-  agosto: 7,
-  septiembre: 8,
-  setiembre: 8,
-  octubre: 9,
-  noviembre: 10,
-  diciembre: 11,
-};
 
 export function createReportWorkbook(
   input: ReportWorkbookInput,
+  reportData?: ReportWorkbookData,
 ): ReportWorkbookFile {
   const generatedAt = new Date();
-  const datasetKind = normalizeDatasetKind(input.categoria);
+  const category = normalizeDatasetKind(input.categoria);
+  const storeLabel = input.sucursal?.trim() || "Todas las sucursales";
+  const rangeLabel = reportData?.summary?.dateRange || getReportRangeLabel(input);
+  const rows = Array.isArray(reportData?.rows) ? reportData.rows : [];
 
-  if (datasetKind === "aperturas") {
-    return createSingleDatasetWorkbook({
-      input,
-      generatedAt,
-      datasetKind,
-      reportTitle: "Reporte de aperturas",
-      rangeLabel: getReportRangeLabel(input),
+  const config = buildWorkbookConfig(category, storeLabel, rangeLabel, rows);
+  const files = buildWorkbookFiles([
+    {
+      name: config.sheetName,
+      rows: config.rows,
+      columns: config.columns,
+    },
+  ]);
+
+  return {
+    blob: new Blob([createZip(files)], { type: MIME_TYPE }),
+    filename: `${slugify(`reporte-${category}-${storeLabel}-${rangeLabel}`)}.xlsx`,
+    title: config.title,
+    range: rangeLabel,
+    category,
+    generatedAt: generatedAt.toLocaleString("es-MX"),
+  };
+}
+
+function buildWorkbookConfig(
+  category: DatasetKind,
+  storeLabel: string,
+  rangeLabel: string,
+  rows: unknown[],
+) {
+  if (category === "aperturas") {
+    return {
+      title:
+        storeLabel === "Todas las sucursales"
+          ? "Reporte de aperturas"
+          : `Reporte de aperturas - ${storeLabel}`,
       sheetName: "Aperturas",
-      sheetTitle: "Aperturas limpias",
-      timeColumnLabel: "Hora de apertura",
-      cleanCountLabel: "Aperturas limpias",
-      cleanCountDescription: "Una apertura valida por sucursal y dia",
-      baseName: "Aperturas Propasa limpias",
-      cleaningRuleText: "Se conserva la primera activacion por sucursal y fecha.",
-    });
+      rows: buildEventRows("Hora", rows.filter(isEventRow)),
+      columns: [16, 34, 18],
+    };
   }
 
-  if (datasetKind === "cierres") {
-    return createSingleDatasetWorkbook({
-      input,
-      generatedAt,
-      datasetKind,
-      reportTitle: "Reporte de cierres",
-      rangeLabel: getReportRangeLabel(input),
+  if (category === "cierres") {
+    return {
+      title:
+        storeLabel === "Todas las sucursales"
+          ? "Reporte de cierres"
+          : `Reporte de cierres - ${storeLabel}`,
       sheetName: "Cierres",
-      sheetTitle: "Cierres limpios",
-      timeColumnLabel: "Hora de cierre",
-      cleanCountLabel: "Cierres limpios",
-      cleanCountDescription: "Un cierre valido por sucursal y dia",
-      baseName: "Cierres Propasa limpios",
-      cleaningRuleText: "Se conserva la ultima activacion por sucursal y fecha.",
-    });
-  }
-
-  if (datasetKind === "top") {
-    return createTopWorkbook(input, generatedAt);
-  }
-
-  return createOpenCloseWorkbook(input, generatedAt);
-}
-
-function createSingleDatasetWorkbook(args: {
-  input: ReportWorkbookInput;
-  generatedAt: Date;
-  datasetKind: "aperturas" | "cierres";
-  reportTitle: string;
-  rangeLabel: string;
-  sheetName: string;
-  sheetTitle: string;
-  timeColumnLabel: string;
-  cleanCountLabel: string;
-  cleanCountDescription: string;
-  baseName: string;
-  cleaningRuleText: string;
-}) {
-  const storeLabel = args.input.sucursal?.trim() || "Todas las sucursales";
-  const title =
-    storeLabel === "Todas las sucursales"
-      ? args.reportTitle
-      : `${args.reportTitle} - ${storeLabel}`;
-
-  const aperturas =
-    args.datasetKind === "aperturas" ? getFilteredAperturas(args.input) : [];
-  const cierres =
-    args.datasetKind === "cierres" ? getFilteredCierres(args.input) : [];
-  const records =
-    args.datasetKind === "aperturas"
-      ? aperturas.map(
-          (record) =>
-            ({
-              date: record.date,
-              storeLabel: record.canonicalLabel,
-              eventTime: record.openingTime,
-              rawEventCount: record.rawEventCount,
-              discardedCount: record.discardedCount,
-              discardedTimes: record.discardedTimes,
-              sourceRowNumber: record.sourceRowNumber,
-              canonicalKey: record.canonicalKey,
-            }) as const,
-        )
-      : cierres.map(
-          (record) =>
-            ({
-              date: record.date,
-              storeLabel: record.canonicalLabel,
-              eventTime: record.closingTime,
-              rawEventCount: record.rawEventCount,
-              discardedCount: record.discardedCount,
-              discardedTimes: record.discardedTimes,
-              sourceRowNumber: record.sourceRowNumber,
-              canonicalKey: record.canonicalKey,
-            }) as const,
-        );
-  const discardedRows =
-    args.datasetKind === "aperturas"
-      ? getFilteredDiscardedAperturas(aperturas).map(
-          (event) =>
-            ({
-              date: event.date,
-              storeLabel: event.canonicalLabel,
-              time: event.time,
-              keptTime: event.keptOpeningTime,
-              secondsFromKeptEvent: event.secondsFromKeptOpening,
-              sourceRowNumber: event.sourceRowNumber,
-            }) as const,
-        )
-      : getFilteredDiscardedCierres(cierres).map(
-          (event) =>
-            ({
-              date: event.date,
-              storeLabel: event.canonicalLabel,
-              time: event.time,
-              keptTime: event.keptClosingTime,
-              secondsFromKeptEvent: event.secondsFromKeptClosing,
-              sourceRowNumber: event.sourceRowNumber,
-            }) as const,
-        );
-  const mappingEntries = getRelevantSucursalMapEntries(
-    records.map((record) => record.canonicalKey),
-    args.input.sucursal,
-  );
-
-  const files = buildWorkbookFiles([
-    {
-      name: "Resumen",
-      rows: buildSingleDatasetSummaryRows({
-        title,
-        generatedAt: args.generatedAt,
-        rangeLabel: args.rangeLabel,
-        storeLabel,
-        records,
-        discardedRows,
-        cleanCountLabel: args.cleanCountLabel,
-        cleanCountDescription: args.cleanCountDescription,
-        baseName: args.baseName,
-        cleaningRuleText: args.cleaningRuleText,
-        datasetKind: args.datasetKind,
-      }),
-      columns: [26, 24, 24, 38],
-    },
-    {
-      name: args.sheetName,
-      rows: buildSingleDatasetRows(records, args.sheetTitle, args.timeColumnLabel),
-      columns: [16, 34, 18, 18, 18, 42, 18],
-    },
-    {
-      name: "Duplicados",
-      rows: buildSingleDatasetDiscardedRows(
-        discardedRows,
-        args.datasetKind === "aperturas"
-          ? "Segundos vs apertura"
-          : "Segundos vs cierre",
-      ),
-      columns: [16, 34, 18, 18, 20, 18, 34],
-    },
-    {
-      name: "Mapeo sucursales",
-      rows: buildSucursalMappingRows(mappingEntries),
-      columns: [18, 38, 38, 38, 14, 14],
-    },
-  ]);
-
-  return {
-    blob: new Blob([createZip(files)], { type: MIME_TYPE }),
-    filename: `${slugify(`reporte-${args.datasetKind}-${storeLabel}-${args.rangeLabel}`)}.xlsx`,
-    title,
-    range: args.rangeLabel,
-    category: args.datasetKind,
-    generatedAt: args.generatedAt.toLocaleString("es-MX"),
-  };
-}
-
-function createOpenCloseWorkbook(input: ReportWorkbookInput, generatedAt: Date) {
-  const rangeLabel = getReportRangeLabel(input);
-  const storeLabel = input.sucursal?.trim() || "Todas las sucursales";
-  const title =
-    storeLabel === "Todas las sucursales"
-      ? "Reporte Open-Close"
-      : `Reporte Open-Close - ${storeLabel}`;
-  const aperturas = getFilteredAperturas(input);
-  const cierres = getFilteredCierres(input);
-  const combinedRecords = buildCombinedRecords(aperturas, cierres);
-
-  const files = buildWorkbookFiles([
-    {
-      name: "General",
-      rows: buildOpenCloseSummaryRows({
-        title,
-        generatedAt,
-        rangeLabel,
-        storeLabel,
-        combinedRecords,
-      }),
-      columns: [28, 24, 22, 34, 24],
-    },
-    {
-      name: "open-close",
-      rows: buildOpenCloseRows(combinedRecords),
-      columns: [16, 34, 18, 16, 18, 16],
-    },
-  ]);
-
-  return {
-    blob: new Blob([createZip(files)], { type: MIME_TYPE }),
-    filename: `${slugify(`reporte-open-close-${storeLabel}-${rangeLabel}`)}.xlsx`,
-    title,
-    range: rangeLabel,
-    category: "open-close",
-    generatedAt: generatedAt.toLocaleString("es-MX"),
-  };
-}
-
-function createTopWorkbook(input: ReportWorkbookInput, generatedAt: Date) {
-  const rangeLabel = getReportRangeLabel(input);
-  const storeLabel = input.sucursal?.trim() || "Todas las sucursales";
-  const title =
-    storeLabel === "Todas las sucursales"
-      ? "Reporte Top Cumplimiento"
-      : `Reporte Top Cumplimiento - ${storeLabel}`;
-  const aperturas = getFilteredAperturas(input);
-  const cierres = getFilteredCierres(input);
-  const combinedRecords = buildCombinedRecords(aperturas, cierres);
-  const openingTop = buildTopMetrics(
-    combinedRecords,
-    (record) => record.opensOnTime,
-    (record) => record.openingTime !== null,
-  );
-  const closingTop = buildTopMetrics(
-    combinedRecords,
-    (record) => record.closesOnTime,
-    (record) => record.closingTime !== null,
-  );
-  const bothTop = buildTopMetrics(
-    combinedRecords,
-    (record) => isCompliantOpenClose(record),
-    (record) => record.openingTime !== null && record.closingTime !== null,
-  );
-
-  const files = buildWorkbookFiles([
-    {
-      name: "General",
-      rows: buildTopSummaryRows({
-        title,
-        generatedAt,
-        rangeLabel,
-        openingTop,
-        closingTop,
-        bothTop,
-      }),
-      columns: [28, 26, 22, 36],
-    },
-    {
-      name: "Top Apertura",
-      rows: buildTopMetricRows(
-        "Top cumplimiento apertura",
-        openingTop,
-        "Cumplimiento apertura",
-      ),
-      columns: [10, 34, 18, 18, 18, 18],
-    },
-    {
-      name: "Top Cierre",
-      rows: buildTopMetricRows(
-        "Top cumplimiento cierre",
-        closingTop,
-        "Cumplimiento cierre",
-      ),
-      columns: [10, 34, 18, 18, 18, 18],
-    },
-    {
-      name: "Top Ambas",
-      rows: buildTopMetricRows(
-        "Top cumplimiento open-close",
-        bothTop,
-        "Cumplimiento open-close",
-      ),
-      columns: [10, 34, 18, 18, 18, 18],
-    },
-  ]);
-
-  return {
-    blob: new Blob([createZip(files)], { type: MIME_TYPE }),
-    filename: `${slugify(`reporte-top-${storeLabel}-${rangeLabel}`)}.xlsx`,
-    title,
-    range: rangeLabel,
-    category: "top",
-    generatedAt: generatedAt.toLocaleString("es-MX"),
-  };
-}
-
-function buildDateQuery(input: ReportWorkbookInput): DateQuery {
-  return {
-    range: input.rango ?? input.fecha ?? null,
-    fromDate: input.desde ?? null,
-    toDate: input.hasta ?? null,
-    storeQuery: input.sucursal ?? null,
-  };
-}
-
-function getReportRangeLabel(input: ReportWorkbookInput) {
-  const window = resolveDateWindow(input);
-  return `${formatDateLabel(window.startDate)} a ${formatDateLabel(window.endDate)}`;
-}
-
-function resolveDateWindow(input: ReportWorkbookInput) {
-  const query = buildDateQuery(input);
-  const explicitStart = parseSingleDate(query.fromDate ?? "");
-  const explicitEnd = parseSingleDate(query.toDate ?? "");
-
-  if (explicitStart || explicitEnd) {
-    const startDate = explicitStart ?? explicitEnd ?? "2026-03-25";
-    const endDate = explicitEnd ?? explicitStart ?? "2026-04-23";
-    return orderDateWindow(startDate, endDate);
-  }
-
-  const parsedRangeDates = parseDates(query.range ?? "");
-
-  if (parsedRangeDates.length >= 2) {
-    return orderDateWindow(parsedRangeDates[0], parsedRangeDates[1]);
-  }
-
-  if (parsedRangeDates.length === 1) {
-    return { startDate: parsedRangeDates[0], endDate: parsedRangeDates[0] };
-  }
-
-  return { startDate: "2026-03-25", endDate: "2026-04-23" };
-}
-
-function orderDateWindow(left: string, right: string) {
-  return left <= right
-    ? { startDate: left, endDate: right }
-    : { startDate: right, endDate: left };
-}
-
-function isDateWithinWindow(value: string, window: { startDate: string; endDate: string }) {
-  return value >= window.startDate && value <= window.endDate;
-}
-
-function parseDates(value: string) {
-  const normalizedValue = normalizeKey(value).replace(/_/g, " ");
-  const dates: string[] = [];
-
-  collectNumericDates(value, dates);
-  collectTextDateRanges(normalizedValue, dates);
-  collectTextDates(normalizedValue, dates);
-
-  return Array.from(new Set(dates)).sort();
-}
-
-function parseSingleDate(value: string) {
-  const parsedDates = parseDates(value);
-  return parsedDates.length > 0 ? parsedDates[0] : null;
-}
-
-function collectNumericDates(value: string, dates: string[]) {
-  const matches =
-    value.match(
-      /\b(\d{4})[-/](\d{1,2})[-/](\d{1,2})\b|\b(\d{1,2})[-/](\d{1,2})[-/](\d{4})\b/g,
-    ) ?? [];
-
-  for (const match of matches) {
-    const parts = match.split(/[-/]/).map(Number);
-    const candidate =
-      parts[0] > 999
-        ? createIsoDate(parts[0], parts[1], parts[2])
-        : createIsoDate(parts[2], parts[1], parts[0]);
-
-    if (candidate) {
-      dates.push(candidate);
-    }
-  }
-}
-
-function collectTextDateRanges(value: string, dates: string[]) {
-  const rangeRegex =
-    /\b(\d{1,2})(?:\s+de)?\s+([a-z]+)(?:\s+de)?(?:\s+(\d{4}))?\s+(?:a|al|hasta)\s+(\d{1,2})(?:\s+de)?\s+([a-z]+)?(?:\s+de)?\s+(\d{4})?\b/g;
-  const shortRangeRegex =
-    /\b(\d{1,2})(?:\s*(?:a|al|hasta|-)\s*)(\d{1,2})(?:\s+de)?\s+([a-z]+)(?:\s+de)?(?:\s+(\d{4}))?\b/g;
-
-  for (const match of value.matchAll(rangeRegex)) {
-    const startMonth = MONTHS[normalizeKey(match[2])];
-    const endMonth = MONTHS[normalizeKey(match[5] ?? match[2])];
-    const startYear = Number(match[3] ?? match[6] ?? DEFAULT_REPORT_YEAR);
-    const endYear = Number(match[6] ?? match[3] ?? DEFAULT_REPORT_YEAR);
-    const startDate = createIsoDate(startYear, startMonth + 1, Number(match[1]));
-    const endDate = createIsoDate(endYear, endMonth + 1, Number(match[4]));
-
-    if (startDate) {
-      dates.push(startDate);
-    }
-
-    if (endDate) {
-      dates.push(endDate);
-    }
-  }
-
-  for (const match of value.matchAll(shortRangeRegex)) {
-    const month = MONTHS[normalizeKey(match[3])];
-    const year = Number(match[4] ?? DEFAULT_REPORT_YEAR);
-    const firstDate = createIsoDate(year, month + 1, Number(match[1]));
-    const secondDate = createIsoDate(year, month + 1, Number(match[2]));
-
-    if (firstDate) {
-      dates.push(firstDate);
-    }
-
-    if (secondDate) {
-      dates.push(secondDate);
-    }
-  }
-}
-
-function collectTextDates(value: string, dates: string[]) {
-  const dateRegex =
-    /\b(\d{1,2})(?:\s+de)?\s+(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre)(?:\s+de)?\s+(\d{4})\b/g;
-
-  for (const match of value.matchAll(dateRegex)) {
-    const month = MONTHS[normalizeKey(match[2])];
-    const candidate = createIsoDate(Number(match[3]), month + 1, Number(match[1]));
-
-    if (candidate) {
-      dates.push(candidate);
-    }
-  }
-}
-
-function createIsoDate(year: number, month: number, day: number) {
-  if (
-    !Number.isFinite(year) ||
-    !Number.isFinite(month) ||
-    !Number.isFinite(day)
-  ) {
-    return null;
-  }
-
-  const candidate = new Date(year, month - 1, day);
-
-  if (
-    candidate.getFullYear() !== year ||
-    candidate.getMonth() !== month - 1 ||
-    candidate.getDate() !== day
-  ) {
-    return null;
-  }
-
-  return [
-    String(candidate.getFullYear()).padStart(4, "0"),
-    String(candidate.getMonth() + 1).padStart(2, "0"),
-    String(candidate.getDate()).padStart(2, "0"),
-  ].join("-");
-}
-
-function formatDateLabel(value: string) {
-  const [year, month, day] = value.split("-").map(Number);
-  return `${String(day).padStart(2, "0")}-${String(month).padStart(2, "0")}-${year}`;
-}
-
-function getFilteredAperturas(input: ReportWorkbookInput) {
-  const query = buildDateQuery(input);
-  const dateWindow = resolveDateWindow(input);
-  const baseRecords = findAperturas({ storeQuery: null }).filter((record) =>
-    isDateWithinWindow(record.date, dateWindow),
-  );
-
-  return baseRecords
-    .filter((record) =>
-      matchesSucursalQuery(
-        { storeCode: record.storeCode, storeLabel: record.storeLabel },
-        query.storeQuery,
-      ),
-    )
-    .map((record) => {
-      const canonical = resolveCanonicalStore({
-        storeCode: record.storeCode,
-        storeLabel: record.storeLabel,
-      });
-      return {
-        ...record,
-        canonicalKey: canonical.canonicalKey,
-        canonicalLabel: canonical.canonicalLabel,
-      };
-    });
-}
-
-function getFilteredCierres(input: ReportWorkbookInput) {
-  const query = buildDateQuery(input);
-  const dateWindow = resolveDateWindow(input);
-  const baseRecords = findCierres({ storeQuery: null }).filter((record) =>
-    isDateWithinWindow(record.date, dateWindow),
-  );
-
-  return baseRecords
-    .filter((record) =>
-      matchesSucursalQuery(
-        { storeCode: record.storeCode, storeLabel: record.storeLabel },
-        query.storeQuery,
-      ),
-    )
-    .map((record) => {
-      const canonical = resolveCanonicalStore({
-        storeCode: record.storeCode,
-        storeLabel: record.storeLabel,
-      });
-      return {
-        ...record,
-        canonicalKey: canonical.canonicalKey,
-        canonicalLabel: canonical.canonicalLabel,
-      };
-    });
-}
-
-function getFilteredDiscardedAperturas(records: MappedAperturaRecord[]) {
-  return getDiscardedEventsForRecords(records).map((event) => {
-    const canonical = resolveCanonicalStore({
-      storeCode: event.storeCode,
-      storeLabel: event.storeLabel,
-    });
-    return {
-      ...event,
-      canonicalKey: canonical.canonicalKey,
-      canonicalLabel: canonical.canonicalLabel,
+      rows: buildEventRows("Hora", rows.filter(isEventRow)),
+      columns: [16, 34, 18],
     };
-  });
-}
+  }
 
-function getFilteredDiscardedCierres(records: MappedCierreRecord[]) {
-  return getDiscardedCierreEventsForRecords(records).map((event) => {
-    const canonical = resolveCanonicalStore({
-      storeCode: event.storeCode,
-      storeLabel: event.storeLabel,
-    });
+  if (category === "top") {
     return {
-      ...event,
-      canonicalKey: canonical.canonicalKey,
-      canonicalLabel: canonical.canonicalLabel,
+      title:
+        storeLabel === "Todas las sucursales"
+          ? "Reporte Top Cumplimiento"
+          : `Reporte Top Cumplimiento - ${storeLabel}`,
+      sheetName: "Top",
+      rows: buildTopRows(rows.filter(isTopRow)),
+      columns: [34, 16, 16, 16, 16],
     };
-  });
-}
-
-function buildCombinedRecords(
-  aperturas: MappedAperturaRecord[],
-  cierres: MappedCierreRecord[],
-) {
-  const combined = new Map<string, CombinedRecord>();
-
-  for (const apertura of aperturas) {
-    const key = `${apertura.date}|${apertura.canonicalKey}`;
-    const existing = combined.get(key);
-
-    combined.set(key, {
-      date: apertura.date,
-      canonicalKey: apertura.canonicalKey,
-      storeCode: apertura.storeCode,
-      storeLabel: apertura.canonicalLabel,
-      openingTime: apertura.openingTime,
-      closingTime: existing?.closingTime ?? null,
-      opensOnTime: isOpenOnTime(apertura.openingTime),
-      closesOnTime: existing?.closesOnTime ?? null,
-      openingRawEventCount: apertura.rawEventCount,
-      closingRawEventCount: existing?.closingRawEventCount ?? 0,
-      openingDiscardedCount: apertura.discardedCount,
-      closingDiscardedCount: existing?.closingDiscardedCount ?? 0,
-      openingSourceRowNumber: apertura.sourceRowNumber,
-      closingSourceRowNumber: existing?.closingSourceRowNumber ?? null,
-      status: existing?.closingTime ? "Completo" : "Sin cierre",
-      complianceStatus: "Pendiente",
-      notes: "",
-    });
   }
 
-  for (const cierre of cierres) {
-    const key = `${cierre.date}|${cierre.canonicalKey}`;
-    const existing = combined.get(key);
-
-    combined.set(key, {
-      date: cierre.date,
-      canonicalKey: cierre.canonicalKey,
-      storeCode: cierre.storeCode,
-      storeLabel: cierre.canonicalLabel,
-      openingTime: existing?.openingTime ?? null,
-      closingTime: cierre.closingTime,
-      opensOnTime: existing?.opensOnTime ?? null,
-      closesOnTime: isCloseOnTime(cierre.closingTime),
-      openingRawEventCount: existing?.openingRawEventCount ?? 0,
-      closingRawEventCount: cierre.rawEventCount,
-      openingDiscardedCount: existing?.openingDiscardedCount ?? 0,
-      closingDiscardedCount: cierre.discardedCount,
-      openingSourceRowNumber: existing?.openingSourceRowNumber ?? null,
-      closingSourceRowNumber: cierre.sourceRowNumber,
-      status: existing?.openingTime ? "Completo" : "Sin apertura",
-      complianceStatus: "Pendiente",
-      notes: "",
-    });
-  }
-
-  return Array.from(combined.values())
-    .map((record) => finalizeCombinedRecord(record))
-    .sort((left, right) => {
-      if (left.date !== right.date) {
-        return left.date.localeCompare(right.date);
-      }
-
-      return left.storeLabel.localeCompare(right.storeLabel);
-    });
+  return {
+    title:
+      storeLabel === "Todas las sucursales"
+        ? "Reporte Open-Close"
+        : `Reporte Open-Close - ${storeLabel}`,
+    sheetName: "Open-Close",
+    rows: buildOpenCloseRows(rows.filter(isOpenCloseRow)),
+    columns: [16, 34, 18, 18, 18, 18, 22],
+  };
 }
 
-function getRelevantSucursalMapEntries(
-  canonicalKeys: string[],
-  storeQuery?: string | null,
-) {
-  const allEntries = listSucursalMapEntries();
-
-  if (canonicalKeys.length > 0) {
-    const allowedKeys = new Set(canonicalKeys);
-    return allEntries.filter((entry) => allowedKeys.has(entry.canonicalKey));
-  }
-
-  if (!storeQuery?.trim()) {
-    return allEntries;
-  }
-
-  return allEntries.filter((entry) =>
-    matchesSucursalQuery(
-      {
-        storeCode: entry.storeCode,
-        storeLabel: entry.canonicalLabel,
-      },
-      storeQuery,
-    ),
-  );
-}
-
-function buildSingleDatasetSummaryRows(args: {
-  title: string;
-  generatedAt: Date;
-  rangeLabel: string;
-  storeLabel: string;
-  records: Array<{
-    date: string;
-    storeLabel: string;
-    eventTime: string;
-    rawEventCount: number;
-    discardedCount: number;
-  }>;
-  discardedRows: Array<{ secondsFromKeptEvent: number }>;
-  cleanCountLabel: string;
-  cleanCountDescription: string;
-  baseName: string;
-  cleaningRuleText: string;
-  datasetKind: "aperturas" | "cierres";
-}): SheetRow[] {
-  const uniqueStores = new Set(args.records.map((record) => record.storeLabel)).size;
-  const uniqueDates = new Set(args.records.map((record) => record.date)).size;
-  const averageTime = formatAverageTime(args.records.map((record) => record.eventTime));
-  const earliestTime = formatClockTime(getBoundaryTime(args.records.map((record) => record.eventTime), "min"));
-  const latestTime = formatClockTime(getBoundaryTime(args.records.map((record) => record.eventTime), "max"));
-
+function buildEventRows(timeLabel: string, rows: EventRow[]): SheetRow[] {
   return [
-    [{ value: args.title, style: 1 }, null, null, null],
-    ["Base", args.baseName],
-    ["Criterio de limpieza", args.cleaningRuleText],
-    ["Sucursal", args.storeLabel],
-    ["Rango", args.rangeLabel],
-    ["Generado", args.generatedAt.toLocaleString("es-MX")],
-    [],
-    [
-      { value: "Indicador", style: 2 },
-      { value: "Valor", style: 2 },
-      { value: "Lectura", style: 2 },
-    ],
-    [args.cleanCountLabel, args.records.length, args.cleanCountDescription],
-    ["Sucursales", uniqueStores, "Sucursales incluidas en el filtro"],
-    ["Dias con registro", uniqueDates, "Fechas con al menos un registro valido"],
-    [
-      "Eventos descartados",
-      args.discardedRows.length,
-      "Duplicados o repeticiones del mismo dia",
-    ],
-    ["Promedio de hora", averageTime, "Promedio de hora en la muestra"],
-    [
-      "Hora mas temprana",
-      earliestTime,
-      `Dentro de ${args.datasetKind === "aperturas" ? "las aperturas" : "los cierres"}`,
-    ],
-    [
-      "Hora mas tardia",
-      latestTime,
-      `Dentro de ${args.datasetKind === "aperturas" ? "las aperturas" : "los cierres"}`,
-    ],
-  ];
-}
-
-function buildOpenCloseSummaryRows(args: {
-  title: string;
-  generatedAt: Date;
-  rangeLabel: string;
-  storeLabel: string;
-  combinedRecords: CombinedRecord[];
-}): SheetRow[] {
-  const openingEvents = args.combinedRecords.filter(
-    (record) => record.openingTime !== null,
-  );
-  const closingEvents = args.combinedRecords.filter(
-    (record) => record.closingTime !== null,
-  );
-  const compliant = args.combinedRecords.filter(
-    (record) => record.complianceStatus === "Cumple open-close",
-  );
-  const openingCompliant = args.combinedRecords.filter(
-    (record) => record.opensOnTime === true,
-  );
-  const closingCompliant = args.combinedRecords.filter(
-    (record) => record.closesOnTime === true,
-  );
-  const reviewed = args.combinedRecords.length;
-  const notCompliant = reviewed - compliant.length;
-  const compliance = reviewed
-    ? `${((compliant.length / reviewed) * 100).toFixed(1)}%`
-    : "0.0%";
-  const openingCompliance = openingEvents.length
-    ? `${((openingCompliant.length / openingEvents.length) * 100).toFixed(1)}%`
-    : "0.0%";
-  const closingCompliance = closingEvents.length
-    ? `${((closingCompliant.length / closingEvents.length) * 100).toFixed(1)}%`
-    : "0.0%";
-
-  return [
-    [{ value: args.title, style: 1 }, null, null, null, null],
-    ["Categoria", "open-close"],
-    ["Rango", args.rangeLabel],
-    ["Generado", args.generatedAt.toLocaleString("es-MX")],
-    ["Regla apertura", "Cumple si abre a las 07:00 o antes"],
-    ["Regla cierre", "Cumple si cierra a las 22:00 o despues"],
-    [],
-    [
-      { value: "Indicador", style: 2 },
-      { value: "Valor", style: 2 },
-      { value: "Lectura", style: 2 },
-    ],
-    ["Eventos apertura", openingEvents.length, "Aperturas con registro"],
-    ["Eventos cierre", closingEvents.length, "Cierres con registro"],
-    ["Eventos revisados", reviewed, "Open/Close con registro"],
-    ["Cumplieron", compliant.length, "Eventos dentro del horario esperado"],
-    ["No cumplieron", notCompliant, "Eventos fuera del horario esperado"],
-    ["Cumplimiento", compliance, "Cumplimiento del periodo"],
-    [
-      "Cumplimiento apertura",
-      openingCompliance,
-      "Porcentaje de aperturas a las 07:00 o antes",
-    ],
-    [
-      "Cumplimiento cierre",
-      closingCompliance,
-      "Porcentaje de cierres a las 22:00 o despues",
-    ],
-  ];
-}
-
-function buildTopSummaryRows(args: {
-  title: string;
-  generatedAt: Date;
-  rangeLabel: string;
-  openingTop: TopStoreMetric[];
-  closingTop: TopStoreMetric[];
-  bothTop: TopStoreMetric[];
-}): SheetRow[] {
-  const bestOpening = args.openingTop[0];
-  const bestClosing = args.closingTop[0];
-  const bestBoth = args.bothTop[0];
-
-  return [
-    [{ value: args.title, style: 1 }, null, null, null],
-    ["Categoria", "top"],
-    ["Rango", args.rangeLabel],
-    ["Generado", args.generatedAt.toLocaleString("es-MX")],
-    ["Lectura", "Ranking de sucursales por cumplimiento de apertura, cierre y ambas"],
-    [],
-    [
-      { value: "Indicador", style: 2 },
-      { value: "Sucursal", style: 2 },
-      { value: "Valor", style: 2 },
-      { value: "Lectura", style: 2 },
-    ],
-    [
-      "Mejor apertura",
-      bestOpening?.storeLabel ?? "Sin datos",
-      formatPercentage(bestOpening?.complianceRate ?? 0),
-      summarizeTopMetric(bestOpening),
-    ],
-    [
-      "Mejor cierre",
-      bestClosing?.storeLabel ?? "Sin datos",
-      formatPercentage(bestClosing?.complianceRate ?? 0),
-      summarizeTopMetric(bestClosing),
-    ],
-    [
-      "Mejor open-close",
-      bestBoth?.storeLabel ?? "Sin datos",
-      formatPercentage(bestBoth?.complianceRate ?? 0),
-      summarizeTopMetric(bestBoth),
-    ],
-    ["Sucursales evaluadas apertura", args.openingTop.length, "", ""],
-    ["Sucursales evaluadas cierre", args.closingTop.length, "", ""],
-    ["Sucursales evaluadas open-close", args.bothTop.length, "", ""],
-  ];
-}
-
-function buildTopMetricRows(
-  title: string,
-  metrics: TopStoreMetric[],
-  complianceLabel: string,
-): SheetRow[] {
-  return [
-    [{ value: title, style: 1 }, null, null, null, null, null],
-    [],
-    [
-      { value: "Rank", style: 2 },
-      { value: "Sucursal", style: 2 },
-      { value: "Cumplieron", style: 2 },
-      { value: "Evaluados", style: 2 },
-      { value: complianceLabel, style: 2 },
-      { value: "Sin dato", style: 2 },
-    ],
-    ...(metrics.length > 0
-      ? metrics.map((metric, index) => [
-          index + 1,
-          metric.storeLabel,
-          metric.compliantCount,
-          metric.evaluatedCount,
-          formatPercentage(metric.complianceRate),
-          metric.missingCount,
-        ])
-      : [["Sin resultados", null, null, null, null, null]]),
-  ];
-}
-
-function buildSingleDatasetRows(
-  records: Array<{
-    date: string;
-    storeLabel: string;
-    eventTime: string;
-    rawEventCount: number;
-    discardedCount: number;
-    discardedTimes: string[];
-    sourceRowNumber: number;
-  }>,
-  title: string,
-  timeColumnLabel: string,
-): SheetRow[] {
-  return [
-    [{ value: title, style: 1 }, null, null, null, null, null, null],
-    [],
     [
       { value: "Fecha", style: 2 },
       { value: "Sucursal", style: 2 },
-      { value: timeColumnLabel, style: 2 },
-      { value: "Eventos detectados", style: 2 },
-      { value: "Descartados", style: 2 },
-      { value: "Horas descartadas", style: 2 },
-      { value: "Fila origen", style: 2 },
+      { value: timeLabel, style: 2 },
     ],
-    ...(records.length > 0
-      ? records.map((record) => [
-          record.date,
-          record.storeLabel,
-          formatClockTime(record.eventTime),
-          record.rawEventCount,
-          record.discardedCount,
-          record.discardedTimes.length > 0
-            ? record.discardedTimes.map(formatClockTime).join(", ")
-            : "Sin descartes",
-          record.sourceRowNumber,
-        ])
-      : [["Sin resultados", null, null, null, null, null, null]]),
+    ...(rows.length > 0
+      ? rows.map((row) => [row.date, row.storeLabel, formatClockTime(row.eventTime)])
+      : [["Sin resultados", null, null]]),
   ];
 }
 
-function buildSingleDatasetDiscardedRows(
-  events: Array<{
-    date: string;
-    storeLabel: string;
-    time: string;
-    keptTime: string;
-    secondsFromKeptEvent: number;
-    sourceRowNumber: number;
-  }>,
-  secondsColumnLabel: string,
-): SheetRow[] {
+function buildOpenCloseRows(rows: OpenCloseRow[]): SheetRow[] {
   return [
-    [{ value: "Eventos descartados", style: 1 }, null, null, null, null, null, null],
-    [],
-    [
-      { value: "Fecha", style: 2 },
-      { value: "Sucursal", style: 2 },
-      { value: "Hora descartada", style: 2 },
-      { value: "Hora conservada", style: 2 },
-      { value: secondsColumnLabel, style: 2 },
-      { value: "Fila origen", style: 2 },
-      { value: "Motivo", style: 2 },
-    ],
-    ...(events.length > 0
-      ? events.map((event) => [
-          event.date,
-          event.storeLabel,
-          formatClockTime(event.time),
-          formatClockTime(event.keptTime),
-          event.secondsFromKeptEvent,
-          event.sourceRowNumber,
-          "Mismo local y misma fecha, evento repetido",
-        ])
-      : [["Sin descartes", null, null, null, null, null, null]]),
-  ];
-}
-
-function buildOpenCloseRows(records: CombinedRecord[]): SheetRow[] {
-  return [
-    [{ value: "Open-Close", style: 1 }, null, null, null, null, null],
-    [],
     [
       { value: "Fecha", style: 2 },
       { value: "Sucursal", style: 2 },
@@ -1054,260 +165,82 @@ function buildOpenCloseRows(records: CombinedRecord[]): SheetRow[] {
       { value: "Cumplio apertura", style: 2 },
       { value: "Hora cierre", style: 2 },
       { value: "Cumplio cierre", style: 2 },
+      { value: "Cumplimiento", style: 2 },
     ],
-    ...(records.length > 0
-      ? records.map((record) => [
-          record.date,
-          record.storeLabel,
-          formatClockTime(record.openingTime),
-          formatComplianceFlag(record.opensOnTime, "apertura"),
-          formatClockTime(record.closingTime),
-          formatComplianceFlag(record.closesOnTime, "cierre"),
+    ...(rows.length > 0
+      ? rows.map((row) => [
+          row.date,
+          row.storeLabel,
+          formatClockTime(row.openingTime),
+          formatComplianceFlag(row.opensOnTime, "apertura"),
+          formatClockTime(row.closingTime),
+          formatComplianceFlag(row.closesOnTime, "cierre"),
+          row.complianceStatus ?? "Sin dato",
         ])
-      : [[
-          "Sin resultados",
-          null,
-          null,
-          null,
-          null,
-          null,
-        ]]),
+      : [["Sin resultados", null, null, null, null, null, null]]),
   ];
 }
 
-function buildSucursalMappingRows(entries: SucursalMapEntry[]): SheetRow[] {
+function buildTopRows(rows: TopRow[]): SheetRow[] {
   return [
-    [{ value: "Mapeo de sucursales", style: 1 }, null, null, null, null, null],
-    [],
     [
-      { value: "Codigo", style: 2 },
-      { value: "Sucursal canonica", style: 2 },
-      { value: "Alias aperturas", style: 2 },
-      { value: "Alias cierres", style: 2 },
-      { value: "Tiene aperturas", style: 2 },
-      { value: "Tiene cierres", style: 2 },
+      { value: "Sucursal", style: 2 },
+      { value: "Evaluados", style: 2 },
+      { value: "Cumplieron", style: 2 },
+      { value: "Cumplimiento", style: 2 },
+      { value: "Sin dato", style: 2 },
     ],
-    ...(entries.length > 0
-      ? entries.map((entry) => [
-          entry.storeCode ?? "Sin codigo",
-          entry.canonicalLabel,
-          entry.aperturaAliases.join(" | ") || "Sin alias",
-          entry.cierreAliases.join(" | ") || "Sin alias",
-          entry.hasAperturas ? "Si" : "No",
-          entry.hasCierres ? "Si" : "No",
+    ...(rows.length > 0
+      ? rows.map((row) => [
+          row.storeLabel,
+          row.evaluatedCount,
+          row.compliantCount,
+          formatPercentage(row.complianceRate),
+          row.missingCount,
         ])
-      : [["Sin sucursales", null, null, null, null, null]]),
+      : [["Sin resultados", null, null, null, null]]),
   ];
 }
 
-function buildTopMetrics(
-  records: CombinedRecord[],
-  isCompliant: (record: CombinedRecord) => boolean | null,
-  isEvaluated: (record: CombinedRecord) => boolean,
-) {
-  const grouped = new Map<string, TopStoreMetric>();
-
-  for (const record of records) {
-    const current = grouped.get(record.canonicalKey) ?? {
-      canonicalKey: record.canonicalKey,
-      storeLabel: record.storeLabel,
-      evaluatedCount: 0,
-      compliantCount: 0,
-      complianceRate: 0,
-      missingCount: 0,
-    };
-
-    if (isEvaluated(record)) {
-      current.evaluatedCount += 1;
-
-      if (isCompliant(record) === true) {
-        current.compliantCount += 1;
-      }
-    } else {
-      current.missingCount += 1;
-    }
-
-    grouped.set(record.canonicalKey, current);
+function isEventRow(row: unknown): row is EventRow {
+  if (!row || typeof row !== "object") {
+    return false;
   }
 
-  return Array.from(grouped.values())
-    .map((metric) => ({
-      ...metric,
-      complianceRate:
-        metric.evaluatedCount > 0
-          ? metric.compliantCount / metric.evaluatedCount
-          : 0,
-    }))
-    .filter((metric) => metric.evaluatedCount > 0)
-    .sort((left, right) => {
-      if (right.complianceRate !== left.complianceRate) {
-        return right.complianceRate - left.complianceRate;
-      }
-
-      if (right.compliantCount !== left.compliantCount) {
-        return right.compliantCount - left.compliantCount;
-      }
-
-      if (right.evaluatedCount !== left.evaluatedCount) {
-        return right.evaluatedCount - left.evaluatedCount;
-      }
-
-      return left.storeLabel.localeCompare(right.storeLabel);
-    });
-}
-
-function finalizeCombinedRecord(record: CombinedRecord): CombinedRecord {
-  const status =
-    record.openingTime && record.closingTime
-      ? "Completo"
-      : record.openingTime
-        ? "Sin cierre"
-        : "Sin apertura";
-
-  if (status === "Sin apertura") {
-    return {
-      ...record,
-      status,
-      complianceStatus: "Incompleto",
-      notes: "No se encontro apertura valida para evaluar si abrio a tiempo.",
-    };
-  }
-
-  if (status === "Sin cierre") {
-    return {
-      ...record,
-      status,
-      complianceStatus: "Incompleto",
-      notes: "No se encontro cierre valido para evaluar si cerro a tiempo.",
-    };
-  }
-
-  const opensOnTime = record.opensOnTime === true;
-  const closesOnTime = record.closesOnTime === true;
-
-  if (opensOnTime && closesOnTime) {
-    return {
-      ...record,
-      status,
-      complianceStatus: "Cumple open-close",
-      notes: "Abrio y cerro dentro del horario esperado.",
-    };
-  }
-
-  if (!opensOnTime && !closesOnTime) {
-    return {
-      ...record,
-      status,
-      complianceStatus: "No cumple ambos",
-      notes: "Abrio despues de las 7:00 AM y cerro antes de las 10:00 PM.",
-    };
-  }
-
-  if (!opensOnTime) {
-    return {
-      ...record,
-      status,
-      complianceStatus: "No cumple apertura",
-      notes: "Abrio despues de las 7:00 AM.",
-    };
-  }
-
-  return {
-    ...record,
-    status,
-    complianceStatus: "No cumple cierre",
-    notes: "Cerro antes de las 10:00 PM.",
-  };
-}
-
-function isCompliantOpenClose(record: CombinedRecord) {
-  return record.complianceStatus === "Cumple open-close";
-}
-
-function formatPercentage(value: number) {
-  return `${(value * 100).toFixed(1)}%`;
-}
-
-function summarizeTopMetric(metric?: TopStoreMetric) {
-  if (!metric) {
-    return "Sin datos";
-  }
-
-  return `${metric.compliantCount} de ${metric.evaluatedCount} cumplidos`;
-}
-
-function getBoundaryTime(values: Array<string | null>, mode: "min" | "max") {
-  const filtered = values.filter(Boolean) as string[];
-
-  if (filtered.length === 0) {
-    return null;
-  }
-
-  return filtered.reduce((selected, current) => {
-    const currentSeconds = timeToSeconds(current);
-    const selectedSeconds = timeToSeconds(selected);
-    const shouldReplace =
-      mode === "min"
-        ? currentSeconds < selectedSeconds
-        : currentSeconds > selectedSeconds;
-
-    return shouldReplace ? current : selected;
-  });
-}
-
-function formatAverageTime(values: string[]) {
-  if (values.length === 0) {
-    return "Sin datos";
-  }
-
-  const totalSeconds = values.reduce(
-    (sum, value) => sum + timeToSeconds(value),
-    0,
+  const candidate = row as Record<string, unknown>;
+  return (
+    typeof candidate.date === "string" &&
+    typeof candidate.storeLabel === "string" &&
+    typeof candidate.eventTime === "string"
   );
-  const averageSeconds = Math.round(totalSeconds / values.length);
-  return formatClockTime(secondsToTime(averageSeconds));
 }
 
-function timeToSeconds(value: string) {
-  const [hours = "0", minutes = "0", seconds = "0"] = value.split(":");
-  return Number(hours) * 3600 + Number(minutes) * 60 + Number(seconds);
-}
-
-function secondsToTime(totalSeconds: number) {
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds % 3600) / 60);
-  const seconds = totalSeconds % 60;
-  return [hours, minutes, seconds]
-    .map((value) => String(value).padStart(2, "0"))
-    .join(":");
-}
-
-function formatClockTime(value: string | null) {
-  if (!value) {
-    return "Sin dato";
+function isOpenCloseRow(row: unknown): row is OpenCloseRow {
+  if (!row || typeof row !== "object") {
+    return false;
   }
 
-  const [hours = "0", minutes = "0", seconds = "0"] = value.split(":");
-  return `${hours}:${minutes}:${seconds}`;
+  const candidate = row as Record<string, unknown>;
+  return (
+    typeof candidate.date === "string" &&
+    typeof candidate.storeLabel === "string" &&
+    ("openingTime" in candidate || "closingTime" in candidate)
+  );
 }
 
-function isOpenOnTime(value: string | null) {
-  return value ? timeToSeconds(value) <= timeToSeconds(OPEN_ON_TIME_THRESHOLD) : null;
-}
-
-function isCloseOnTime(value: string | null) {
-  return value ? timeToSeconds(value) >= timeToSeconds(CLOSE_ON_TIME_THRESHOLD) : null;
-}
-
-function formatComplianceFlag(
-  value: boolean | null,
-  label: "apertura" | "cierre",
-) {
-  if (value === null) {
-    return `Sin ${label}`;
+function isTopRow(row: unknown): row is TopRow {
+  if (!row || typeof row !== "object") {
+    return false;
   }
 
-  return value ? "Si" : "No";
+  const candidate = row as Record<string, unknown>;
+  return (
+    typeof candidate.storeLabel === "string" &&
+    typeof candidate.evaluatedCount === "number" &&
+    typeof candidate.compliantCount === "number" &&
+    typeof candidate.complianceRate === "number" &&
+    typeof candidate.missingCount === "number"
+  );
 }
 
 function normalizeDatasetKind(value?: string | null): DatasetKind {
@@ -1334,6 +267,54 @@ function normalizeDatasetKind(value?: string | null): DatasetKind {
   }
 
   return "open-close";
+}
+
+function getReportRangeLabel(input: ReportWorkbookInput) {
+  if (input.desde && input.hasta) {
+    return `${input.desde} al ${input.hasta}`;
+  }
+
+  if (input.desde) {
+    return input.desde;
+  }
+
+  if (input.hasta) {
+    return input.hasta;
+  }
+
+  if (input.rango?.trim()) {
+    return input.rango.trim();
+  }
+
+  if (input.fecha?.trim()) {
+    return input.fecha.trim();
+  }
+
+  return "Sin datos";
+}
+
+function formatPercentage(value: number) {
+  return `${(value * 100).toFixed(1)}%`;
+}
+
+function formatClockTime(value: string | null) {
+  if (!value) {
+    return "Sin dato";
+  }
+
+  const [hours = "0", minutes = "0", seconds = "0"] = value.split(":");
+  return `${hours}:${minutes}:${seconds}`;
+}
+
+function formatComplianceFlag(
+  value: boolean | null | undefined,
+  label: "apertura" | "cierre",
+) {
+  if (value === null || value === undefined) {
+    return `Sin ${label}`;
+  }
+
+  return value ? "Si" : "No";
 }
 
 function buildWorkbookFiles(
@@ -1398,9 +379,7 @@ function createWorksheetXml(rows: SheetRow[], columns: number[]) {
   return xml(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
   <sheetViews>
-    <sheetView workbookViewId="0">
-      <pane ySplit="3" topLeftCell="A4" activePane="bottomLeft" state="frozen"/>
-    </sheetView>
+    <sheetView workbookViewId="0"/>
   </sheetViews>
   <cols>${cols}</cols>
   <sheetData>${rowXml}</sheetData>
@@ -1488,24 +467,21 @@ function createWorkbookRelsXml(sheetCount: number) {
 function createStylesXml() {
   return xml(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-  <fonts count="3">
+  <fonts count="2">
     <font><sz val="11"/><name val="Aptos"/></font>
-    <font><b/><sz val="18"/><color rgb="FFFFFFFF"/><name val="Aptos Display"/></font>
     <font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Aptos"/></font>
   </fonts>
-  <fills count="4">
+  <fills count="3">
     <fill><patternFill patternType="none"/></fill>
     <fill><patternFill patternType="gray125"/></fill>
     <fill><patternFill patternType="solid"><fgColor rgb="FF1D4ED8"/><bgColor indexed="64"/></patternFill></fill>
-    <fill><patternFill patternType="solid"><fgColor rgb="FFEFF6FF"/><bgColor indexed="64"/></patternFill></fill>
   </fills>
   <borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>
   <cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
-  <cellXfs count="4">
+  <cellXfs count="3">
     <xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
     <xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFill="1" applyFont="1"/>
-    <xf numFmtId="0" fontId="2" fillId="2" borderId="0" xfId="0" applyFill="1" applyFont="1"/>
-    <xf numFmtId="0" fontId="0" fillId="3" borderId="0" xfId="0" applyFill="1"/>
+    <xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFill="1" applyFont="1"/>
   </cellXfs>
 </styleSheet>`);
 }

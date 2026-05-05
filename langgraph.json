@@ -1,0 +1,7 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "teseo": "./src/lib/langgraph/teseoGraph.ts:createTeseoGraph"
+  },
+  "env": ".env"
+}

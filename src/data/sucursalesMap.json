@@ -1,8 +1,6 @@
 {
   "meta": {
     "generatedAt": "2026-04-27T14:32:11",
-    "sourceAperturas": "C:\\Users\\x\\Documents\\Proyectos\\MacroPay\\Coco-11Labs\\src\\data\\aperturasKnowledgeBase.json",
-    "sourceCierres": "C:\\Users\\x\\Documents\\Proyectos\\MacroPay\\Coco-11Labs\\src\\data\\cierresKnowledgeBase.json",
     "totalEntries": 158,
     "withAperturasAndCierres": 137,
     "onlyAperturas": 1,
